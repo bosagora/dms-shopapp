@@ -21,6 +21,9 @@ class UserStore {
   langTag = 'ko-KR';
   currency = 'KRW';
 
+  shopId = '00000';
+  shopName = 'unknown';
+
   enableBio = false;
 
   permissionsCount = 0;
@@ -76,6 +79,14 @@ class UserStore {
   setLoading = (loading) => {
     this.loading = loading;
   };
+
+  setShopId = (id) => {
+    this.shopId = id;
+  }
+
+  setShopName = (name) => {
+    this.shopName = name;
+  }
 }
 
 export default UserStore;

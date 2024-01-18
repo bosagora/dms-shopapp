@@ -28,7 +28,7 @@ import HandelAuthentication from '../screens/kitchen/HandelAuthentication';
 import ModalScreen from '../screens/kitchen/ModalScreen';
 import PinCodeScreen from '../screens/PinCodeScreen';
 import Term from '../screens/initScreens/Term';
-import PhoneAuth from '../screens/initScreens/PhoneAuth';
+import ShopReg from '../screens/initScreens/ShopReg';
 import Secret from '../screens/initScreens/Secret';
 import { AUTH_STATE } from '../stores/user.store';
 import InitPinCodeScreen from '../screens/initScreens/InitPinCodeScreen';
@@ -253,8 +253,8 @@ function InitStackScreen() {
         options={{ headerShown: false }}
       />
       <InitStack.Screen
-        name='PhoneAuth'
-        component={PhoneAuth}
+        name='ShopReg'
+        component={ShopReg}
         options={{ headerShown: false }}
       />
     </InitStack.Navigator>

@@ -52,8 +52,8 @@ const Index = observer(({ navigation }) => {
   async function fetchClient() {
     console.log(
       'Wallet > fetchClient',
-      'EXAMPLE_ENV',
-      process.env.EXPO_PUBLIC_EXAMPLE_ENV,
+      'userStore',
+        userStore
     );
     const { client: client1, address: userAddress } = await getClient();
     console.log('>>>>>>> userAddress :', userAddress);
