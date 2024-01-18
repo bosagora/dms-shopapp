@@ -30,12 +30,12 @@ const Index = observer(({ navigation }) => {
   const [showModal, setShowModal] = useState(false);
   const [client, setClient] = useState();
   const [address, setAddress] = useState('');
-  const [payablePoint, setPayablePoint] = useState(new BOACoin(0));
-  const [payablePointRate, setPayablePointRate] = useState(new BOACoin(0));
-  const [onePointRate, setOnePointRate] = useState(new BOACoin(0));
-  const [userTokenBalance, setUserTokenBalance] = useState(new BOACoin(0));
-  const [userTokenRate, setUserTokenRate] = useState(new BOACoin(0));
-  const [oneTokenRate, setOneTokenRate] = useState(new BOACoin(0));
+  const [providedAmount, setProvidedAmount] = useState('0');
+  const [usedAmount, setUsedAmount] = useState('0');
+  const [withdrawAmount, setWithdrawAmount] = useState('0');
+  const [withdrawnAmount, setWithdrawnAmount] = useState('0');
+  const [withdrawableAmount, setWithdrawableAmount] = useState('0');
+
   const [userLoyaltyType, setUserLoyaltyType] = useState(0);
   const [phone, setPhone] = useState('');
   const { t } = useTranslation();
@@ -43,16 +43,16 @@ const Index = observer(({ navigation }) => {
     console.log('================= userStore', userStore);
 
     fetchClient().then(() =>
-      console.log(
-        'end of wallet fetch client > last :',
-        loyaltyStore.lastUpdateTime,
-      ),
+        console.log(
+            'end of wallet fetch client > last :',
+            loyaltyStore.lastUpdateTime,
+        ),
     );
   }, [loyaltyStore.lastUpdateTime]);
   async function fetchClient() {
     console.log(
-      'Wallet > fetchClient',
-      'userStore',
+        'Wallet > fetchClient',
+        'userStore',
         userStore
     );
     const { client: client1, address: userAddress } = await getClient();
@@ -65,53 +65,27 @@ const Index = observer(({ navigation }) => {
     const isUp = await client1.ledger.isRelayUp();
     console.log('isUp:', isUp);
 
-    const phone = userStore.phone;
-    setPhone(phone);
-    console.log('user phone :', phone);
 
-    const loyaltyType = await client1.ledger.getLoyaltyType(userAddress);
-    setUserLoyaltyType(loyaltyType);
-    console.log('userLoyaltyType :', loyaltyType);
+    const shopInfo = await client1.shop.getShopInfo(userStore.shopId);
+    console.log('shopInfo :', shopInfo)
 
-    const tokenBalance = await client1.ledger.getTokenBalance(userAddress);
-    console.log('tokenBalance :', tokenBalance.toString());
-    const tokenBalConv = new BOACoin(tokenBalance);
-    console.log('tokenBalConv :', tokenBalConv.toBOAString());
-    setUserTokenBalance(tokenBalConv);
+    const convProvidedAmount = new Amount(shopInfo.providedAmount, 18).toBOAString();
+    const convUsedAmount = new Amount(shopInfo.usedAmount, 18).toBOAString();
+    const convWithdrawAmount = new Amount(shopInfo.withdrawAmount, 18).toBOAString();
+    const convWithdrawnAmount = new Amount(shopInfo.withdrawnAmount, 18).toBOAString();
+    const withdrawableAmountTmp = await client1.shop.getWithdrawableAmount(userStore.shopId);
+    const convWithdrawableAmount = new Amount(withdrawableAmountTmp, 18).toBOAString();
 
-    // const tokenAmount = Amount.make(tokenBalance, 18).value;
-    let userTokenCurrencyRate = await client1.currency.tokenToCurrency(
-      tokenBalance,
-      'krw',
-    );
-    console.log('userTokenCurrencyRate :', userTokenCurrencyRate.toString());
-    const oneConv = new BOACoin(userTokenCurrencyRate);
-    console.log('oneConv :', oneConv.toBOAString());
-    setUserTokenRate(oneConv);
-
-    const oneTokenAmount = BOACoin.make(1, 18).value;
-    let oneTokenCurrencyRate = await client1.currency.tokenToCurrency(
-      oneTokenAmount,
-      'krw',
-    );
-
-    console.log('oneTokenCurrencyRate :', oneTokenCurrencyRate.toString());
-    const boaConv = new BOACoin(oneTokenCurrencyRate);
-    console.log('boaBal :', boaConv.toBOAString());
-    setOneTokenRate(boaConv);
-
-    const userPoint = await client1.ledger.getPointBalance(userAddress);
-    const payableConv = new BOACoin(userPoint);
-    console.log('payableConv :', payableConv.toBOAString());
-    setPayablePoint(payableConv);
-
-    let pointCurrencyRate = await client1.currency.pointToCurrency(
-      userPoint,
-      userStore.currency,
-    );
-    const pointRateConv = new BOACoin(pointCurrencyRate);
-    console.log('pointRateConv :', pointRateConv.toBOAString());
-    setPayablePointRate(pointRateConv);
+    setProvidedAmount(convProvidedAmount)
+    setUsedAmount(convUsedAmount)
+    setWithdrawAmount(convWithdrawAmount)
+    setWithdrawnAmount(convWithdrawnAmount)
+    setWithdrawableAmount(convWithdrawableAmount)
+    console.log("provided Amount:" ,convProvidedAmount);
+    console.log("used Amount:" ,convProvidedAmount);
+    console.log("withdraw Amount:" ,convWithdrawAmount);
+    console.log("withdrawn Amount:" ,convWithdrawnAmount);
+    console.log("withdrawable Amount:" ,convWithdrawableAmount);
   }
   async function fetchBalances() {
     const loyaltyType = await client.ledger.getLoyaltyType(address);
@@ -173,56 +147,56 @@ const Index = observer(({ navigation }) => {
   };
 
   return (
-    <SafeAreaView>
-      <View
-        h='$full'
-        sx={{
-          _dark: {
-            bg: '$backgroundDark800',
-            borderColor: '$borderDark800',
-          },
-        }}>
-        <VStack justifyContent='center' alignItems='center' p='$5'>
-          <HStack>
-            <Box
-              // maxWidth='$64'
-              w='$full'
-              h='$full'
-              borderColor='$backgroundDark900'
-              borderRadius='$xl'
-              borderWidth='$1'
-              p='$4'
-              overflow='hidden'
-              sx={{
-                '@base': {
-                  m: '$3',
-                },
-                _dark: {
-                  bg: '$backgroundDark900',
-                  borderColor: '$backgroundDark600',
-                },
-              }}>
-              <Box>
-                <Heading _dark={{ color: '$textLight200' }} size='lg'>
-                  {userStore.shopName} v0.2 - {process.env.EXPO_PUBLIC_ENV} -{' '}
-                  {process.env.ENVIRONMENT}
-                </Heading>
-                <Text
-                  _dark={{ color: '$textLight200' }}
-                  fontSize='$xs'
-                  my='$1.5'>
-                  모든 KIOS 키오스크 상점의 마일리지 제공 및 정산 내역
-                </Text>
-              </Box>
+      <SafeAreaView>
+        <View
+            h='$full'
+            sx={{
+              _dark: {
+                bg: '$backgroundDark800',
+                borderColor: '$borderDark800',
+              },
+            }}>
+          <VStack justifyContent='center' alignItems='center' p='$5'>
+            <HStack>
+              <Box
+                  // maxWidth='$64'
+                  w='$full'
+                  h='$full'
+                  borderColor='$backgroundDark900'
+                  borderRadius='$xl'
+                  borderWidth='$1'
+                  p='$4'
+                  overflow='hidden'
+                  sx={{
+                    '@base': {
+                      m: '$3',
+                    },
+                    _dark: {
+                      bg: '$backgroundDark900',
+                      borderColor: '$backgroundDark600',
+                    },
+                  }}>
+                <Box>
+                  <Heading _dark={{ color: '$textLight200' }} size='lg'>
+                    {userStore.shopName} v0.2 - {process.env.EXPO_PUBLIC_ENV} -{' '}
+                    {process.env.ENVIRONMENT}
+                  </Heading>
+                  <Text
+                      _dark={{ color: '$textLight200' }}
+                      fontSize='$xs'
+                      my='$1.5'>
+                    모든 KIOS 키오스크 상점의 마일리지 제공 및 정산 내역
+                  </Text>
+                </Box>
 
-              <Divider my='$5' mr='$1' bg='$violet600' />
+                <Divider my='$5' mr='$1' bg='$violet600' />
                 <Box>
                   <HStack justifyContent='space-between'>
                     <HStack m='$30'>
                       <Heading size='sm'>마일리지 제공/사용</Heading>
                     </HStack>
                     <Pressable
-                      onPress={() => navigation.navigate('MileageHistory')}>
+                        onPress={() => navigation.navigate('MileageHistory')}>
                       <Text fontSize='$sm' color='$violet400'>
                         적립/사용 내역
                       </Text>
@@ -230,106 +204,106 @@ const Index = observer(({ navigation }) => {
                   </HStack>
                   <VStack m='$2'>
                     <Text
-                      _dark={{ color: '$textLight200' }}
-                      fontSize='$sm'
-                      mr='$1'>
-                      제공 : {convertProperValue(payablePointRate.toBOAString())} KRW
+                        _dark={{ color: '$textLight200' }}
+                        fontSize='$sm'
+                        mr='$1'>
+                      제공 : {convertProperValue(providedAmount)} KRW
                     </Text>
                     <Text
                         _dark={{ color: '$textLight200' }}
                         fontSize='$sm'
                         mr='$1'>
-                      사용 : {convertProperValue(payablePointRate.toBOAString())} KRW
+                      사용 : {convertProperValue(usedAmount)} KRW
                     </Text>
                   </VStack>
                 </Box>
-              <Box h='$5'></Box>
-              <Box >
-                <HStack justifyContent='space-between'>
-                  <HStack m='$30'>
-                    <Heading size='sm'>마일리지 정산</Heading>
+                <Box h='$5'></Box>
+                <Box >
+                  <HStack justifyContent='space-between'>
+                    <HStack m='$30'>
+                      <Heading size='sm'>마일리지 정산</Heading>
+                    </HStack>
+                    <Pressable
+                        onPress={() => navigation.navigate('MileageAdjustmentHistory')}>
+                      <Text fontSize='$sm' color='$violet400'>
+                        정산 내역
+                      </Text>
+                    </Pressable>
                   </HStack>
-                  <Pressable
-                      onPress={() => navigation.navigate('MileageHistory')}>
-                    <Text fontSize='$sm' color='$violet400'>
-                      정산 내역
+                  <VStack m='$2'>
+                    <Text
+                        _dark={{ color: '$textLight200' }}
+                        fontSize='$sm'
+                        mr='$1'>
+                      정산 중 : {convertProperValue(withdrawAmount)} KRW
                     </Text>
-                  </Pressable>
-                </HStack>
-                <VStack m='$2'>
-                  <Text
-                      _dark={{ color: '$textLight200' }}
-                      fontSize='$sm'
-                      mr='$1'>
-                    정산 중 : {convertProperValue(payablePointRate.toBOAString())} KRW
-                  </Text>
-                  <Text
-                      _dark={{ color: '$textLight200' }}
-                      fontSize='$sm'
-                      mr='$1'>
-                    정산 가능 : {convertProperValue(payablePointRate.toBOAString())} KRW
-                  </Text>
-                  <Text
-                      _dark={{ color: '$textLight200' }}
-                      fontSize='$sm'
-                      mr='$1'>
-                    정산 완료 : {convertProperValue(payablePointRate.toBOAString())} KRW
-                  </Text>
-                </VStack>
+                    <Text
+                        _dark={{ color: '$textLight200' }}
+                        fontSize='$sm'
+                        mr='$1'>
+                      정산 가능 : { convertProperValue(withdrawableAmount)} KRW
+                    </Text>
+                    <Text
+                        _dark={{ color: '$textLight200' }}
+                        fontSize='$sm'
+                        mr='$1'>
+                      정산 완료 : {convertProperValue(withdrawnAmount)} KRW
+                    </Text>
+                  </VStack>
+                </Box>
               </Box>
-            </Box>
-          </HStack>
-        </VStack>
+            </HStack>
+          </VStack>
 
-        <Box>
-          <Modal
-            isOpen={showModal}
-            size='lg'
-            onClose={() => {
-              setShowModal(false);
-            }}>
-            <ModalBackdrop />
-            <ModalContent maxWidth='$96'>
-              <ModalBody p='$5'>
-                <VStack space='lg' mb='$4'>
-                  <Heading>토큰으로 전환하기</Heading>
-                  <Text size='sm'>
-                    포인트를 토큰으로 전환한 후에는 다시 포인트로 전환할 수
-                    없으며, 향후 마일리지는 토큰으로 지급됩니다.
-                  </Text>
-                  <Text size='sm'>계속 진행하려면 확인을 클릭하세요.</Text>
-                </VStack>
+          <Box>
+            <Modal
+                isOpen={showModal}
+                size='lg'
+                onClose={() => {
+                  setShowModal(false);
+                }}>
+              <ModalBackdrop />
+              <ModalContent maxWidth='$96'>
+                <ModalBody p='$5'>
+                  <VStack space='lg' mb='$4'>
+                    <Heading>토큰으로 전환하기</Heading>
+                    <Text size='sm'>
+                      포인트를 토큰으로 전환한 후에는 다시 포인트로 전환할 수
+                      없으며, 향후 마일리지는 토큰으로 지급됩니다.
+                    </Text>
+                    <Text size='sm'>계속 진행하려면 확인을 클릭하세요.</Text>
+                  </VStack>
 
-                <ButtonGroup space='md' alignSelf='center'>
-                  <Button
-                    variant='outline'
-                    py='$2.5'
-                    action='secondary'
-                    onPress={() => {
-                      setShowModal(false);
-                    }}>
-                    <ButtonText fontSize='$sm' fontWeight='$medium'>
-                      취소
-                    </ButtonText>
-                  </Button>
-                  <Button
-                    variant='solid'
-                    bg='$success700'
-                    borderColor='$success700'
-                    onPress={() => {
-                      confirmToToken();
-                    }}>
-                    <ButtonText fontSize='$sm' fontWeight='$medium'>
-                      확인
-                    </ButtonText>
-                  </Button>
-                </ButtonGroup>
-              </ModalBody>
-            </ModalContent>
-          </Modal>
-        </Box>
-      </View>
-    </SafeAreaView>
+                  <ButtonGroup space='md' alignSelf='center'>
+                    <Button
+                        variant='outline'
+                        py='$2.5'
+                        action='secondary'
+                        onPress={() => {
+                          setShowModal(false);
+                        }}>
+                      <ButtonText fontSize='$sm' fontWeight='$medium'>
+                        취소
+                      </ButtonText>
+                    </Button>
+                    <Button
+                        variant='solid'
+                        bg='$success700'
+                        borderColor='$success700'
+                        onPress={() => {
+                          confirmToToken();
+                        }}>
+                      <ButtonText fontSize='$sm' fontWeight='$medium'>
+                        확인
+                      </ButtonText>
+                    </Button>
+                  </ButtonGroup>
+                </ModalBody>
+              </ModalContent>
+            </Modal>
+          </Box>
+        </View>
+      </SafeAreaView>
   );
 });
 
