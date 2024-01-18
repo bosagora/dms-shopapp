@@ -204,31 +204,22 @@ const Index = observer(({ navigation }) => {
               }}>
               <Box>
                 <Heading _dark={{ color: '$textLight200' }} size='lg'>
-                  나의 KIOS 마일리지 shop v0.2 - {process.env.EXPO_PUBLIC_ENV} -{' '}
+                  {userStore.shopName} v0.2 - {process.env.EXPO_PUBLIC_ENV} -{' '}
                   {process.env.ENVIRONMENT}
                 </Heading>
                 <Text
                   _dark={{ color: '$textLight200' }}
                   fontSize='$xs'
                   my='$1.5'>
-                  모든 KIOS 키오스크에서 상품 교환이 가능한 통합 {t('mileage')}
+                  모든 KIOS 키오스크 상점의 마일리지 제공 및 정산 내역
                 </Text>
               </Box>
 
               <Divider my='$5' mr='$1' bg='$violet600' />
-              {userLoyaltyType === 0 ? (
                 <Box>
                   <HStack justifyContent='space-between'>
                     <HStack m='$30'>
-                      <Text
-                        _dark={{ color: '$textLight200' }}
-                        fontSize='$xl'
-                        mr='$1'>
-                        {convertProperValue(payablePoint.toBOAString())}
-                      </Text>
-                      <Text _dark={{ color: '$textLight200' }} fontSize='$sm'>
-                        point
-                      </Text>
+                      <Heading size='sm'>마일리지 제공/사용</Heading>
                     </HStack>
                     <Pressable
                       onPress={() => navigation.navigate('MileageHistory')}>
@@ -237,67 +228,55 @@ const Index = observer(({ navigation }) => {
                       </Text>
                     </Pressable>
                   </HStack>
-                  <HStack m='$2'>
+                  <VStack m='$2'>
                     <Text
                       _dark={{ color: '$textLight200' }}
                       fontSize='$sm'
                       mr='$1'>
-                      ≒ {convertProperValue(payablePointRate.toBOAString())} KRW
+                      제공 : {convertProperValue(payablePointRate.toBOAString())} KRW
                     </Text>
-                    <Text _dark={{ color: '$textLight200' }} fontSize='$sm'>
-                      (1 point ≒ 1 {userStore.currency})
-                    </Text>
-                  </HStack>
-                  <Button mt='$12' onPress={() => handleQRSheet()}>
-                    <ButtonText>키오스크에서 사용하기(QR)</ButtonText>
-                  </Button>
-                  <Box mt='$4' alignItems='flex-end'>
-                    <Pressable onPress={() => convertToToken()}>
-                      <Text fontSize='$sm' color='$violet400'>
-                        > 토큰으로 전환하기
-                      </Text>
-                    </Pressable>
-                  </Box>
-                </Box>
-              ) : (
-                <Box>
-                  <HStack justifyContent='space-between'>
-                    <HStack m='$30'>
-                      <Text
+                    <Text
                         _dark={{ color: '$textLight200' }}
-                        fontSize='$xl'
+                        fontSize='$sm'
                         mr='$1'>
-                        {convertProperValue(userTokenBalance.toBOAString())}
-                      </Text>
-                      <Text _dark={{ color: '$textLight200' }} fontSize='$sm'>
-                        KIOS
-                      </Text>
-                    </HStack>
-                    <Pressable
-                      onPress={() => navigation.navigate('MileageHistory')}>
-                      <Text fontSize='$sm' color='$pink600'>
-                        적립/사용 내역
-                      </Text>
-                    </Pressable>
+                      사용 : {convertProperValue(payablePointRate.toBOAString())} KRW
+                    </Text>
+                  </VStack>
+                </Box>
+              <Box h='$5'></Box>
+              <Box >
+                <HStack justifyContent='space-between'>
+                  <HStack m='$30'>
+                    <Heading size='sm'>마일리지 정산</Heading>
                   </HStack>
-                  <HStack m='$2'>
-                    <Text
+                  <Pressable
+                      onPress={() => navigation.navigate('MileageHistory')}>
+                    <Text fontSize='$sm' color='$violet400'>
+                      정산 내역
+                    </Text>
+                  </Pressable>
+                </HStack>
+                <VStack m='$2'>
+                  <Text
                       _dark={{ color: '$textLight200' }}
                       fontSize='$sm'
                       mr='$1'>
-                      ≒ {convertProperValue(userTokenRate.toBOAString())} KRW
-                    </Text>
-                    <Text _dark={{ color: '$textLight200' }} fontSize='$sm'>
-                      (1 KIOS ≒{' '}
-                      {convertProperValue(oneTokenRate.toBOAString(), 2, 10)}{' '}
-                      KRW)
-                    </Text>
-                  </HStack>
-                  <Button mt='$12' onPress={() => handleQRSheet()}>
-                    <ButtonText>키오스크에서 사용하기(QR)</ButtonText>
-                  </Button>
-                </Box>
-              )}
+                    정산 중 : {convertProperValue(payablePointRate.toBOAString())} KRW
+                  </Text>
+                  <Text
+                      _dark={{ color: '$textLight200' }}
+                      fontSize='$sm'
+                      mr='$1'>
+                    정산 가능 : {convertProperValue(payablePointRate.toBOAString())} KRW
+                  </Text>
+                  <Text
+                      _dark={{ color: '$textLight200' }}
+                      fontSize='$sm'
+                      mr='$1'>
+                    정산 완료 : {convertProperValue(payablePointRate.toBOAString())} KRW
+                  </Text>
+                </VStack>
+              </Box>
             </Box>
           </HStack>
         </VStack>

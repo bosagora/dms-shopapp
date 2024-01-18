@@ -58,15 +58,16 @@ const MileageHistory = observer(({ navigation }) => {
       setClient(client1);
       setAddress(userAddress);
 
-      const res = await client1.ledger.getSaveAndUseHistory(userAddress, {
+      const res = await client1.shop.getProvideAndUseTradeHistory(userStore.shopId, {
         limit: 100,
         skip: 0,
         sortDirection: 'desc',
         sortBy: 'blockNumber',
       });
 
-      console.log('len :', res.userTradeHistories?.length);
-      const history = res.userTradeHistories
+      console.log('len :', res);
+      console.log('len :', res.shopTradeHistories?.length);
+      const history = res.shopTradeHistories
         .filter((it) => {
           return it.action === 1 || it.action === 2;
         })
@@ -74,12 +75,8 @@ const MileageHistory = observer(({ navigation }) => {
           return {
             id: it.id,
             action: it.action,
-            actionName: it.action === 1 ? 'SAVED' : 'USED',
-            loyaltyType: it.loyaltyType,
-            loyaltyTypeName: it.loyaltyType === 0 ? 'POINT' : 'TOKEN',
-            amountPoint: it.amountPoint,
-            amountToken: it.amountToken,
-            amountValue: it.amountValue,
+            actionName: it.action === 1 ? 'PROVIDED' : 'USED',
+            amount: it.action === 1 ? it.providedAmount :  it.usedAmount,
             blockTimestamp: it.blockTimestamp,
           };
         });
@@ -104,7 +101,7 @@ const MileageHistory = observer(({ navigation }) => {
         height='$full'
         bg='$backgroundLight0'>
         <MobileHeader
-          title='마일리지 적립/사용 내역'
+          title='마일리지 제공/사용 내역'
           subTitle={
             historyData && historyData.length > 0
               ? '최근 ' + historyData.length + '개 내역'
@@ -147,7 +144,7 @@ const MileageHistory = observer(({ navigation }) => {
                           color: '$warmGray200',
                         },
                       }}>
-                      {item.actionName === 'SAVED' ? '적립' : '사용'}
+                      {item.actionName === 'PROVIDED' ? '제공' : '사용'}
                     </Text>
                     <Text
                       fontSize='$sm'
@@ -163,14 +160,13 @@ const MileageHistory = observer(({ navigation }) => {
                   <Box>
                     <Text>
                       {convertProperValue(
-                        item.loyaltyType === 1
+                        item.action === 1
                           ? new Amount(
-                              BigNumber.from(item.amountToken),
+                              BigNumber.from(item.amount),
                               9,
                             ).toBOAString()
-                          : item.amountPoint,
+                          : item.amount,
                       )}{' '}
-                      {item.loyaltyTypeName}
                     </Text>
                   </Box>
                 </HStack>

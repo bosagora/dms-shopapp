@@ -135,7 +135,7 @@ const Secret = observer(({ navigation }) => {
         bg='$backgroundLight0'>
         <MobileHeader
           title='지갑 생성'
-          subTitle='마일리지 적립/사용을 위한 지갑'
+          subTitle='상점 등록 및 정산을 위한 지갑'
         />
         <VStack space='lg' pt='$4' m='$7'>
           <Box>
