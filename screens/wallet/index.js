@@ -19,11 +19,18 @@ import {
   ButtonGroup,
 } from '@gluestack-ui/themed';
 import { getClient } from '../../utils/client';
-import { Amount, BOACoin, ContractUtils } from 'dms-sdk-client';
+import {
+  Amount,
+  BOACoin,
+  ContractUtils,
+  ShopWithdrawStatus,
+} from 'dms-sdk-client';
 import { convertProperValue } from '../../utils/convert';
 import loyaltyStore from '../../stores/loyalty.store';
 import { SafeAreaView } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import * as Clipboard from 'expo-clipboard';
+import { BigNumber } from '@ethersproject/bignumber/src.ts';
 
 const Index = observer(({ navigation }) => {
   const { secretStore, userStore, loyaltyStore } = useStores();
@@ -34,11 +41,14 @@ const Index = observer(({ navigation }) => {
   const [modalContent, setModalContent] = useState('');
   const [adjustmentMode, setAdjustmentMode] = useState('');
 
-  const [providedAmount, setProvidedAmount] = useState('0');
-  const [usedAmount, setUsedAmount] = useState('0');
-  const [withdrawAmount, setWithdrawAmount] = useState('0');
-  const [withdrawnAmount, setWithdrawnAmount] = useState('0');
-  const [withdrawableAmount, setWithdrawableAmount] = useState('0');
+  const [adjustmentStatus, setAdjustmentStatus] = useState(0);
+  const [providedAmount, setProvidedAmount] = useState(new Amount(0, 18));
+  const [usedAmount, setUsedAmount] = useState(new Amount(0, 18));
+  const [withdrawAmount, setWithdrawAmount] = useState(new Amount(0, 18));
+  const [withdrawnAmount, setWithdrawnAmount] = useState(new Amount(0, 18));
+  const [withdrawableAmount, setWithdrawableAmount] = useState(
+    new Amount(0, 18),
+  );
 
   const [userLoyaltyType, setUserLoyaltyType] = useState(0);
   const [phone, setPhone] = useState('');
@@ -65,48 +75,33 @@ const Index = observer(({ navigation }) => {
     const isUp = await client1.ledger.isRelayUp();
     console.log('isUp:', isUp);
 
-    const shopInfo = await client1.shop.getShopInfo(userStore.shopId);
+    await fetchBalances(client1);
+  }
+  async function fetchBalances(c) {
+    const shopInfo = await c.shop.getShopInfo(userStore.shopId);
     console.log('shopInfo :', shopInfo);
+    setAdjustmentStatus(shopInfo.status);
 
-    const convProvidedAmount = new Amount(
-      shopInfo.providedAmount,
-      18,
-    ).toBOAString();
-    const convUsedAmount = new Amount(shopInfo.usedAmount, 18).toBOAString();
-    const convWithdrawAmount = new Amount(
-      shopInfo.withdrawAmount,
-      18,
-    ).toBOAString();
-    const convWithdrawnAmount = new Amount(
-      shopInfo.withdrawnAmount,
-      18,
-    ).toBOAString();
-    const withdrawableAmountTmp = await client1.shop.getWithdrawableAmount(
-      userStore.shopId,
-    );
-    const convWithdrawableAmount = new Amount(
-      withdrawableAmountTmp,
-      18,
-    ).toBOAString();
+    const convProvidedAmount = new Amount(shopInfo.providedAmount, 18);
+    const convUsedAmount = new Amount(shopInfo.usedAmount, 18);
+    const convWithdrawAmount = new Amount(shopInfo.withdrawAmount, 18);
+    const convWithdrawnAmount = new Amount(shopInfo.withdrawnAmount, 18);
+    const withdrawableAmountTmp =
+      shopInfo.status === 0
+        ? await c.shop.getWithdrawableAmount(userStore.shopId)
+        : new Amount(0, 18).value;
+    const convWithdrawableAmount = new Amount(withdrawableAmountTmp, 18);
 
     setProvidedAmount(convProvidedAmount);
     setUsedAmount(convUsedAmount);
     setWithdrawAmount(convWithdrawAmount);
     setWithdrawnAmount(convWithdrawnAmount);
     setWithdrawableAmount(convWithdrawableAmount);
-    console.log('provided Amount:', convProvidedAmount);
-    console.log('used Amount:', convProvidedAmount);
-    console.log('withdraw Amount:', convWithdrawAmount);
-    console.log('withdrawn Amount:', convWithdrawnAmount);
-    console.log('withdrawable Amount:', convWithdrawableAmount);
-  }
-  async function fetchBalances() {
-    const loyaltyType = await client.ledger.getLoyaltyType(address);
-    console.log('userLoyaltyType :', loyaltyType);
-    const point = await client.ledger.getPointBalance(address);
-    console.log('pointBalance :', point.toString());
-    const tokenBalance = await client.ledger.getTokenBalance(address);
-    console.log('tokenBalance :', tokenBalance.toString());
+    console.log('provided Amount:', convProvidedAmount.toBOAString());
+    console.log('used Amount:', convProvidedAmount.toBOAString());
+    console.log('withdraw Amount:', convWithdrawAmount.toBOAString());
+    console.log('withdrawn Amount:', convWithdrawnAmount.toBOAString());
+    console.log('withdrawable Amount:', convWithdrawableAmount.toBOAString());
   }
   const handleQRSheet = async () => {
     // await fetchPoints();
@@ -123,10 +118,48 @@ const Index = observer(({ navigation }) => {
     console.log('confirm');
     setShowModal(false);
     userStore.setLoading(true);
+
+    const steps = [];
     if (adjustmentMode === 'request') {
+      try {
+        for await (const step of client.shop.openWithdrawal(
+          userStore.shopId,
+          withdrawableAmount.value,
+        )) {
+          steps.push(step);
+          console.log('request step :', step);
+        }
+        if (steps.length === 3 && steps[2].key === 'done') {
+          alert('정산 금액이 정상적으로 요청되었습니다.');
+        }
+        userStore.setLoading(false);
+        await fetchBalances(client);
+      } catch (e) {
+        await Clipboard.setStringAsync(JSON.stringify(e));
+        console.log('error : ', e);
+        userStore.setLoading(false);
+        alert('정산금액 요청에 실패하였습니다.' + JSON.stringify(e));
+      }
     } else if (adjustmentMode === 'complete') {
+      try {
+        for await (const step of client.shop.closeWithdrawal(
+          userStore.shopId,
+        )) {
+          steps.push(step);
+          console.log('request step :', step);
+        }
+        if (steps.length === 3 && steps[2].key === 'done') {
+          alert('정산이 정상적으로 완료 되었습니다.');
+        }
+        userStore.setLoading(false);
+        await fetchBalances(client);
+      } catch (e) {
+        await Clipboard.setStringAsync(JSON.stringify(e));
+        console.log('error : ', e);
+        userStore.setLoading(false);
+        alert('정산 완료에 실패하였습니다.' + JSON.stringify(e));
+      }
     }
-    userStore.setLoading(false);
   };
 
   const handleComplete = () => {
@@ -206,12 +239,13 @@ const Index = observer(({ navigation }) => {
                 <VStack m='$2'>
                   <Box p='$1'>
                     <Text _dark={{ color: '$textLight200' }} size='md' mr='$1'>
-                      제공 : {convertProperValue(providedAmount)} KRW
+                      제공 : {convertProperValue(providedAmount.toBOAString())}{' '}
+                      KRW
                     </Text>
                   </Box>
                   <Box p='$1'>
                     <Text _dark={{ color: '$textLight200' }} size='md' mr='$1'>
-                      사용 : {convertProperValue(usedAmount)} KRW
+                      사용 : {convertProperValue(usedAmount.toBOAString())} KRW
                     </Text>
                   </Box>
                 </VStack>
@@ -238,11 +272,18 @@ const Index = observer(({ navigation }) => {
                         _dark={{ color: '$textLight200' }}
                         size='sm'
                         mr='$2'>
-                        진행 금액 : {convertProperValue(withdrawAmount)} KRW
+                        진행 금액 :{' '}
+                        {convertProperValue(withdrawAmount.toBOAString())} KRW
                       </Text>
-                      <Button size='xs' h={25} onPress={() => handleComplete()}>
-                        <ButtonText size='xs'>완료</ButtonText>
-                      </Button>
+                      {adjustmentStatus &&
+                      adjustmentStatus === ShopWithdrawStatus.OPEN ? (
+                        <Button
+                          size='xs'
+                          h={25}
+                          onPress={() => handleComplete()}>
+                          <ButtonText size='xs'>완료</ButtonText>
+                        </Button>
+                      ) : null}
                     </HStack>
                   </Box>
                   <Box p='$1'>
@@ -251,17 +292,27 @@ const Index = observer(({ navigation }) => {
                         _dark={{ color: '$textLight200' }}
                         size='sm'
                         mr='$2'>
-                        가능 금액 : {convertProperValue(withdrawableAmount)} KRW
+                        가능 금액 :{' '}
+                        {convertProperValue(withdrawableAmount.toBOAString())}{' '}
+                        KRW
                       </Text>
-                      <Button size='xs' h={25} onPress={() => handleRequest()}>
-                        <ButtonText size='xs'>요청</ButtonText>
-                      </Button>
+                      {adjustmentStatus &&
+                      adjustmentStatus === ShopWithdrawStatus.CLOSE &&
+                      withdrawableAmount.value.gt(BigNumber.from(0)) ? (
+                        <Button
+                          size='xs'
+                          h={25}
+                          onPress={() => handleRequest()}>
+                          <ButtonText size='xs'>요청</ButtonText>
+                        </Button>
+                      ) : null}
                     </HStack>
                   </Box>
 
                   <Box p='$1'>
                     <Text _dark={{ color: '$textLight200' }} size='sm' mr='$2'>
-                      완료 금액 : {convertProperValue(withdrawnAmount)} KRW
+                      완료 금액 :{' '}
+                      {convertProperValue(withdrawnAmount.toBOAString())} KRW
                     </Text>
                   </Box>
                 </VStack>
