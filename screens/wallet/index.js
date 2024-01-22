@@ -49,6 +49,7 @@ const Index = observer(({ navigation }) => {
   const [withdrawableAmount, setWithdrawableAmount] = useState(
     new Amount(0, 18),
   );
+  const [intervalId, setIntervalId] = useState(0);
 
   const [userLoyaltyType, setUserLoyaltyType] = useState(0);
   const [phone, setPhone] = useState('');
@@ -78,30 +79,40 @@ const Index = observer(({ navigation }) => {
     await fetchBalances(client1);
   }
   async function fetchBalances(c) {
-    const shopInfo = await c.shop.getShopInfo(userStore.shopId);
-    console.log('shopInfo :', shopInfo);
-    setAdjustmentStatus(shopInfo.withdrawStatus);
+    if (intervalId > 0) clearInterval(intervalId);
 
-    const convProvidedAmount = new Amount(shopInfo.providedAmount, 18);
-    const convUsedAmount = new Amount(shopInfo.usedAmount, 18);
-    const convWithdrawAmount = new Amount(shopInfo.withdrawAmount, 18);
-    const convWithdrawnAmount = new Amount(shopInfo.withdrawnAmount, 18);
-    const withdrawableAmountTmp =
-      shopInfo.status === 0
-        ? await c.shop.getWithdrawableAmount(userStore.shopId)
-        : new Amount(0, 18).value;
-    const convWithdrawableAmount = new Amount(withdrawableAmountTmp, 18);
+    const id = setInterval(async () => {
+      const shopInfo = await c.shop.getShopInfo(userStore.shopId);
+      console.log('shopInfo :', shopInfo);
+      setAdjustmentStatus(shopInfo.withdrawStatus);
 
-    setProvidedAmount(convProvidedAmount);
-    setUsedAmount(convUsedAmount);
-    setWithdrawAmount(convWithdrawAmount);
-    setWithdrawnAmount(convWithdrawnAmount);
-    setWithdrawableAmount(convWithdrawableAmount);
-    console.log('provided Amount:', convProvidedAmount.toBOAString());
-    console.log('used Amount:', convProvidedAmount.toBOAString());
-    console.log('withdraw Amount:', convWithdrawAmount.toBOAString());
-    console.log('withdrawn Amount:', convWithdrawnAmount.toBOAString());
-    console.log('withdrawable Amount:', convWithdrawableAmount.toBOAString());
+      const convProvidedAmount = new Amount(shopInfo.providedAmount, 18);
+      const convUsedAmount = new Amount(shopInfo.usedAmount, 18);
+      const convWithdrawAmount = new Amount(shopInfo.withdrawAmount, 18);
+      const convWithdrawnAmount = new Amount(shopInfo.withdrawnAmount, 18);
+      const withdrawableAmountTmp =
+        shopInfo.withdrawStatus === 0
+          ? await c.shop.getWithdrawableAmount(userStore.shopId)
+          : new Amount(0, 18).value;
+      const convWithdrawableAmount = new Amount(withdrawableAmountTmp, 18);
+
+      setProvidedAmount(convProvidedAmount);
+      setUsedAmount(convUsedAmount);
+      setWithdrawAmount(convWithdrawAmount);
+      setWithdrawnAmount(convWithdrawnAmount);
+      setWithdrawableAmount(convWithdrawableAmount);
+      // console.log('provided Amount:', convProvidedAmount.toBOAString());
+      // console.log('used Amount:', convProvidedAmount.toBOAString());
+      // console.log('withdraw Amount:', convWithdrawAmount.toBOAString());
+      // console.log('withdrawn Amount:', convWithdrawnAmount.toBOAString());
+      // console.log('withdrawable Amount:', convWithdrawableAmount.toBOAString());
+      // console.log('wAdjustmentStatus :', adjustmentStatus);
+      // console.log(
+      //   ' withdrawableAmount.value.gt(BigNumber.from(0)) :',
+      //   withdrawableAmount.value.gt(BigNumber.from(0)),
+      // );
+    }, 5000);
+    setIntervalId(id);
   }
   const handleQRSheet = async () => {
     // await fetchPoints();
@@ -133,7 +144,7 @@ const Index = observer(({ navigation }) => {
           alert('정산 금액이 정상적으로 요청되었습니다.');
         }
         userStore.setLoading(false);
-        await fetchBalances(client);
+        // await fetchBalances(client);
       } catch (e) {
         await Clipboard.setStringAsync(JSON.stringify(e));
         console.log('error : ', e);
@@ -152,7 +163,7 @@ const Index = observer(({ navigation }) => {
           alert('정산이 정상적으로 완료 되었습니다.');
         }
         userStore.setLoading(false);
-        await fetchBalances(client);
+        // await fetchBalances(client);
       } catch (e) {
         await Clipboard.setStringAsync(JSON.stringify(e));
         console.log('error : ', e);
@@ -273,10 +284,14 @@ const Index = observer(({ navigation }) => {
                         size='sm'
                         mr='$2'>
                         진행 금액 :{' '}
-                        {convertProperValue(withdrawAmount.toBOAString())} KRW
+                        {adjustmentStatus === ShopWithdrawStatus.OPEN
+                          ? convertProperValue(withdrawAmount.toBOAString())
+                          : convertProperValue(
+                              new Amount(0, 18).toBOAString(),
+                            )}{' '}
+                        KRW
                       </Text>
-                      {adjustmentStatus &&
-                      adjustmentStatus === ShopWithdrawStatus.OPEN ? (
+                      {adjustmentStatus === ShopWithdrawStatus.OPEN ? (
                         <Button
                           size='xs'
                           h={25}
@@ -296,8 +311,7 @@ const Index = observer(({ navigation }) => {
                         {convertProperValue(withdrawableAmount.toBOAString())}{' '}
                         KRW
                       </Text>
-                      {adjustmentStatus &&
-                      adjustmentStatus !== ShopWithdrawStatus.OPEN &&
+                      {adjustmentStatus !== ShopWithdrawStatus.OPEN &&
                       withdrawableAmount.value.gt(BigNumber.from(0)) ? (
                         <Button
                           size='xs'

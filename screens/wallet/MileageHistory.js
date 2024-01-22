@@ -58,12 +58,15 @@ const MileageHistory = observer(({ navigation }) => {
       setClient(client1);
       setAddress(userAddress);
 
-      const res = await client1.shop.getProvideAndUseTradeHistory(userStore.shopId, {
-        limit: 100,
-        skip: 0,
-        sortDirection: 'desc',
-        sortBy: 'blockNumber',
-      });
+      const res = await client1.shop.getProvideAndUseTradeHistory(
+        userStore.shopId,
+        {
+          limit: 100,
+          skip: 0,
+          sortDirection: 'desc',
+          sortBy: 'blockNumber',
+        },
+      );
 
       console.log('len :', res);
       console.log('len :', res.shopTradeHistories?.length);
@@ -76,7 +79,7 @@ const MileageHistory = observer(({ navigation }) => {
             id: it.id,
             action: it.action,
             actionName: it.action === 1 ? 'PROVIDED' : 'USED',
-            amount: it.action === 1 ? it.providedAmount :  it.usedAmount,
+            amount: it.action === 1 ? it.providedAmount : it.increase,
             blockTimestamp: it.blockTimestamp,
           };
         });
