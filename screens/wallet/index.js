@@ -80,7 +80,7 @@ const Index = observer(({ navigation }) => {
   async function fetchBalances(c) {
     const shopInfo = await c.shop.getShopInfo(userStore.shopId);
     console.log('shopInfo :', shopInfo);
-    setAdjustmentStatus(shopInfo.status);
+    setAdjustmentStatus(shopInfo.withdrawStatus);
 
     const convProvidedAmount = new Amount(shopInfo.providedAmount, 18);
     const convUsedAmount = new Amount(shopInfo.usedAmount, 18);
@@ -297,7 +297,7 @@ const Index = observer(({ navigation }) => {
                         KRW
                       </Text>
                       {adjustmentStatus &&
-                      adjustmentStatus === ShopWithdrawStatus.CLOSE &&
+                      adjustmentStatus !== ShopWithdrawStatus.OPEN &&
                       withdrawableAmount.value.gt(BigNumber.from(0)) ? (
                         <Button
                           size='xs'
