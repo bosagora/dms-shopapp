@@ -78,7 +78,12 @@ const MileageHistory = observer(({ navigation }) => {
           return {
             id: it.id,
             action: it.action,
-            actionName: it.action === 1 ? 'PROVIDED' : 'USED',
+            actionName:
+              it.action === 1
+                ? 'PROVIDED'
+                : it.cancel === false
+                ? 'USED'
+                : 'CANCEL',
             amount: it.action === 1 ? it.providedAmount : it.increase,
             blockTimestamp: it.blockTimestamp,
           };
@@ -147,7 +152,11 @@ const MileageHistory = observer(({ navigation }) => {
                           color: '$warmGray200',
                         },
                       }}>
-                      {item.actionName === 'PROVIDED' ? '제공' : '사용'}
+                      {item.actionName === 'PROVIDED'
+                        ? '제공'
+                        : item.actionName === 'CANCEL'
+                        ? '취소'
+                        : '사용'}
                     </Text>
                     <Text
                       fontSize='$sm'
@@ -162,6 +171,7 @@ const MileageHistory = observer(({ navigation }) => {
                   </VStack>
                   <Box>
                     <Text>
+                      {item.actionName === 'CANCEL' ? '-' : ''}
                       {convertProperValue(
                         item.action === 1
                           ? new Amount(

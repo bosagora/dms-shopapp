@@ -105,7 +105,7 @@ const Index = observer(({ navigation }) => {
       // console.log('used Amount:', convProvidedAmount.toBOAString());
       // console.log('withdraw Amount:', convWithdrawAmount.toBOAString());
       // console.log('withdrawn Amount:', convWithdrawnAmount.toBOAString());
-      // console.log('withdrawable Amount:', convWithdrawableAmount.toBOAString());
+      console.log('withdrawable Amount:', convWithdrawableAmount.toBOAString());
       // console.log('wAdjustmentStatus :', adjustmentStatus);
       // console.log(
       //   ' withdrawableAmount.value.gt(BigNumber.from(0)) :',
@@ -177,7 +177,7 @@ const Index = observer(({ navigation }) => {
     console.log('handle complete');
     setModalHeader('정산 완료');
     setModalContent(
-      '정산 금액이 은행계좌로 입급된 것을 확인하시고 정산요청을 완료하세요.',
+      '정산 금액이 은행계좌로 입금된 것을 확인하시고 정산요청을 완료하세요.',
     );
     setAdjustmentMode('complete');
     setShowModal(true);

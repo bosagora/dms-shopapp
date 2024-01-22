@@ -76,7 +76,7 @@ const MileageAdjustmentHistory = observer(({ navigation }) => {
             id: it.id,
             action: it.action,
             actionName: it.action === 11 ? 'OPEN_WITHDRAWN' : 'CLOSE_WITHDRAWN',
-            amount: it.action === 11 ? it.withdrawnAmount : it.withdrawnAmount,
+            amount: it.action === 11 ? it.increase : it.increase,
             blockTimestamp: it.blockTimestamp,
           };
         });
