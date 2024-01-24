@@ -98,8 +98,6 @@ const WalletManager = observer(({ navigation }) => {
 
   async function saveKey(key) {
     key = key.trim();
-    // const privateKey = key.includes('0x') ? key.split('0x')[0] : key;
-    // console.log('save privateKey :', privateKey);
     let wallet;
     try {
       wallet = new Wallet(key);
@@ -111,12 +109,6 @@ const WalletManager = observer(({ navigation }) => {
     secretStore.setAddress(wallet.address);
     await saveSecureValue('address', wallet.address);
     await saveSecureValue('privateKey', key);
-
-    const shopId = ContractUtils.getShopId(wallet.address);
-    console.log('-------------------> wallet.address :', wallet.address);
-    console.log('shopId :', shopId);
-    userStore.setShopId(shopId);
-    const time = Math.round(+new Date() / 1000);
 
     await fetchClient();
     userStore.setLoading(false);

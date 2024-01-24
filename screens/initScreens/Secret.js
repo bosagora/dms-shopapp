@@ -55,7 +55,6 @@ const Secret = observer(({ navigation }) => {
 
   async function tt() {
     userStore.setLoading(true);
-    alert('tt q------>>>>>');
     setTimeout(async () => {
       await createWallet();
     }, 100);
@@ -64,7 +63,6 @@ const Secret = observer(({ navigation }) => {
   async function registerPushTokenWithClient(cc) {
     console.log('registerPushTokenWithClient >>>>>>>> cc:', cc);
     const token = userStore.expoPushToken;
-    alert('Secret > token :' + token);
     const language = 'kr';
     const os = Platform.OS === 'android' ? 'android' : 'iOS';
     try {
@@ -89,10 +87,6 @@ const Secret = observer(({ navigation }) => {
 
   async function saveKey(key) {
     key = key.trim();
-    console.log('key :', key);
-    console.log('key.split :', key.split('0x'));
-    // const privateKey = key.includes('0x') ? key.split('0x')[1] : key;
-    // console.log('save privateKey :', privateKey);
     let wallet;
     try {
       wallet = new Wallet(key);
@@ -104,6 +98,7 @@ const Secret = observer(({ navigation }) => {
     secretStore.setAddress(wallet.address);
     await saveSecureValue('address', wallet.address);
     await saveSecureValue('privateKey', key);
+
     await fetchClient();
     userStore.setLoading(false);
     setFromOtherWallet(true);

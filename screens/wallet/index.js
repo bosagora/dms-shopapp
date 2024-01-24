@@ -31,6 +31,9 @@ import { SafeAreaView } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import * as Clipboard from 'expo-clipboard';
 import { BigNumber } from '@ethersproject/bignumber/src.ts';
+import { getSecureValue, saveSecureValue } from '../../utils/secure.store';
+import '@ethersproject/shims';
+import { Wallet } from 'ethers';
 
 const Index = observer(({ navigation }) => {
   const { secretStore, userStore, loyaltyStore } = useStores();
@@ -50,7 +53,7 @@ const Index = observer(({ navigation }) => {
     new Amount(0, 18),
   );
   const [intervalId, setIntervalId] = useState(0);
-
+  const [privateKey, setPrivateKey] = useState('');
   const [userLoyaltyType, setUserLoyaltyType] = useState(0);
   const [phone, setPhone] = useState('');
   const { t } = useTranslation();
@@ -64,6 +67,7 @@ const Index = observer(({ navigation }) => {
       ),
     );
   }, [loyaltyStore.lastUpdateTime]);
+
   async function fetchClient() {
     console.log('Wallet > fetchClient', 'userStore', userStore);
     const { client: client1, address: userAddress } = await getClient();
@@ -82,6 +86,14 @@ const Index = observer(({ navigation }) => {
     if (intervalId > 0) clearInterval(intervalId);
 
     const id = setInterval(async () => {
+      const pkey = await getSecureValue('privateKey');
+      console.log('pkey:', pkey);
+      console.log('privateKey:', privateKey);
+      if (pkey !== privateKey) {
+        await c.useSigner(new Wallet(pkey));
+        setPrivateKey(pkey);
+      }
+
       console.log('>> << >> userStore.shopId : ', userStore.shopId);
       const shopInfo = await c.shop.getShopInfo(userStore.shopId);
       console.log('shopInfo :', shopInfo);
@@ -224,7 +236,7 @@ const Index = observer(({ navigation }) => {
               }}>
               <Box>
                 <Heading _dark={{ color: '$textLight200' }} size='lg'>
-                  {userStore.shopName} v0.5.2 - {process.env.EXPO_PUBLIC_ENV} -{' '}
+                  {userStore.shopName} v0.6.5 - {process.env.EXPO_PUBLIC_ENV} -{' '}
                   {process.env.ENVIRONMENT}
                 </Heading>
                 <Text

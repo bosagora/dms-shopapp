@@ -14,8 +14,12 @@ import {
 import { CheckIcon } from 'lucide-react-native';
 import MobileHeader from '../../components/MobileHeader';
 import '@ethersproject/shims';
-import { NormalSteps } from 'dms-sdk-client';
+import { Amount, NormalSteps } from 'dms-sdk-client';
 import { getClient } from '../../utils/client';
+import { getLocales } from 'expo-localization';
+import { getSecureValue } from '../../utils/secure.store';
+import { Wallet } from 'ethers';
+import { convertProperValue } from '../../utils/convert';
 
 const MileageRedeemNotification = observer(({ navigation }) => {
   const { loyaltyStore } = useStores();
@@ -24,67 +28,89 @@ const MileageRedeemNotification = observer(({ navigation }) => {
   const [client, setClient] = useState(null);
   const [address, setAddress] = useState('');
 
+  const [shopName, setShopName] = useState('');
+  const [purchaseId, setPurchaseId] = useState('');
+  const [amount, setAmount] = useState(new Amount(0, 18));
+  const [currency, setCurrency] = useState('');
+
   useEffect(() => {
     async function fetchClient() {
-      console.log('MileageRedeemNotification > fetchClient');
-      const { client, address } = await getClient();
-      setClient(client);
+      const { client: client1, address } = await getClient();
+      setClient(client1);
       setAddress(address);
 
-      const web3Status = await client.web3.isUp();
+      const web3Status = await client1.web3.isUp();
       console.log('web3Status :', web3Status);
-      const isUp = await client.ledger.isRelayUp();
+      const isUp = await client1.ledger.isRelayUp();
       console.log('isUp:', isUp);
+      alert('payment :' + JSON.stringify(loyaltyStore.payment));
+      await savePaymnentInfo(client1, loyaltyStore.payment.id);
     }
     fetchClient().then(() => console.log('end of fetchClient'));
 
     console.log('loyaltyStore :', loyaltyStore);
     // initiateTimer();
   }, []);
+  const saveShopInfo = async (cc, shopId) => {
+    // get shop info
+    const info = await cc.shop.getShopInfo(shopId);
+    console.log('shop info : ', info);
+    setShopName(info.name);
+  };
 
-  async function confirmRedeem() {
-    console.log(
-      'confirm Redeem > loyaltyStore.payment :',
-      loyaltyStore.payment,
-    );
-    if (loyaltyStore.payment.id.length < 0) {
-      alert('Empty payment Id.');
-      return;
-    }
-    const steps = [];
-    const paymentId = loyaltyStore.payment.id;
-    let detail = await client.ledger.getPaymentDetail(paymentId);
+  const savePaymnentInfo = async (cc, paymentId) => {
+    const info = await cc.ledger.getPaymentDetail(paymentId);
+    console.log('payment info:', info);
+    setPurchaseId(info.purchaseId);
+    setAmount(new Amount(info.amount, 18));
+    setCurrency(info.currency);
+    await saveShopInfo(cc, info.shopId);
+  };
 
-    console.log('payment detail : ', detail);
-    // return;
-    // Approve New
-    for await (const step of client.ledger.approveNewPayment(
-      paymentId,
-      detail.purchaseId,
-      detail.amount,
-      detail.currency.toLowerCase(),
-      detail.shopId,
-      true,
-    )) {
-      steps.push(step);
-      console.log('confirmRedeem step :', step);
-      switch (step.key) {
-        case NormalSteps.PREPARED:
-          break;
-        case NormalSteps.SENT:
-          break;
-        case NormalSteps.APPROVED:
-          break;
-        default:
-          throw new Error(
-            'Unexpected pay point step: ' + JSON.stringify(step, null, 2),
-          );
+  async function resetPrivateKey() {
+    const pkey = await getSecureValue('privateKey');
+    console.log('pkey:', pkey);
+    await client.useSigner(new Wallet(pkey));
+  }
+  async function confirmCancel() {
+    try {
+      const steps = [];
+      const isUp = await client.ledger.isRelayUp();
+      alert('confirmCancel > isUp:' + isUp);
+      for await (const step of client.ledger.approveCancelPayment(
+        loyaltyStore.payment.id,
+        purchaseId,
+        true,
+      )) {
+        steps.push(step);
+        console.log('confirmCancel step :', step);
+        alert('confirmCancel step :' + step);
+        switch (step.key) {
+          case NormalSteps.PREPARED:
+            break;
+          case NormalSteps.SENT:
+            break;
+          case NormalSteps.APPROVED:
+            break;
+          default:
+            throw new Error(
+              'Unexpected pay point step: ' + JSON.stringify(step, null, 2),
+            );
+        }
       }
-    }
-    if (steps.length === 3 && steps[2].key === 'approved') {
-      const time = Math.round(+new Date() / 1000);
-      loyaltyStore.setLastUpdateTime(time);
-      navigation.navigate('Wallet');
+      if (steps.length === 3 && steps[2].key === 'approved') {
+        const time = Math.round(+new Date() / 1000);
+        loyaltyStore.setLastUpdateTime(time);
+        alert('정상적으로 취소 승인이 되었습니다.');
+        navigation.navigate('Wallet');
+      }
+    } catch (e) {
+      console.log('e :', e);
+      alert(
+        '취소 승인에 실패하였습니다. 관리자에게 문의하세요.' +
+          'e:' +
+          JSON.stringify(e),
+      );
     }
   }
 
@@ -109,22 +135,21 @@ const MileageRedeemNotification = observer(({ navigation }) => {
         <VStack space='lg' pt='$4' m='$7'>
           <HStack>
             <Text w='40%'>구매 상점 :</Text>
-            <Text>네모 김밥</Text>
+            <Text>{shopName}</Text>
           </HStack>
           <HStack>
-            <Text w='40%'>구매 금액 :</Text>
-            <Text>45800</Text>
+            <Text w='40%'>구매 ID :</Text>
+            <Text>{purchaseId}</Text>
           </HStack>
           <HStack>
-            <Text w='40%'>사용 금액 :</Text>
-            <Text>900</Text>
-          </HStack>
-          <HStack>
-            <Text w='40%'>적립 금액 :</Text>
-            <Text>460</Text>
+            <Text w='40%'>취소 금액 :</Text>
+            <Text>
+              {convertProperValue(amount.toBOAString())}{' '}
+              {currency.toUpperCase()}
+            </Text>
           </HStack>
           <Box py='$10'>
-            <Button py='$2.5' px='$3' onPress={() => confirmRedeem()}>
+            <Button py='$2.5' px='$3' onPress={() => confirmCancel()}>
               <ButtonText>확인</ButtonText>
             </Button>
           </Box>

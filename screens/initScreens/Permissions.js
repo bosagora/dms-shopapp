@@ -43,7 +43,6 @@ const Permissions = observer(({ navigation }) => {
     if (userStore.expoPushToken.length < 10) return false;
     console.log('2');
     if (!userStore.expoPushToken.includes('ExponentPushToken')) return false;
-    alert('checkPushToken 3');
     return true;
   }
   function agreePermissions() {

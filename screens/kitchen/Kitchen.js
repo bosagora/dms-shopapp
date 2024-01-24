@@ -23,7 +23,7 @@ import MileageRedeemNotification from '../wallet/MileageRedeemNotification';
 
 // export default function Kitchen({ navigation }) {
 const Kitchen = observer(({ navigation }) => {
-  const { pinStore, userStore } = useStores();
+  const { pinStore, userStore, loyaltyStore } = useStores();
   function initAuth() {
     console.log('initAuth');
     userStore.setAuthState(AUTH_STATE.INIT);
@@ -54,7 +54,14 @@ const Kitchen = observer(({ navigation }) => {
           </Button>
           <Button
             my='$2'
-            onPress={() => navigation.navigate('MileageRedeemNotification')}>
+            onPress={() => {
+              const payment = {
+                id: '0x8a1e2380b3b0a6f59a75986de9f0ac3f0220be5718cd0622cc7c54ef8d8a13c6',
+                type: 'new',
+              };
+              loyaltyStore.setPayment(payment);
+              navigation.navigate('MileageRedeemNotification');
+            }}>
             <ButtonText>Go to MileageRedeemNotification </ButtonText>
             <ButtonIcon as={AddIcon} />
           </Button>
