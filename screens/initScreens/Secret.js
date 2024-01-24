@@ -1,41 +1,30 @@
-import {
-  Keyboard,
-  Platform,
-  SafeAreaView,
-  TouchableWithoutFeedback,
-} from 'react-native';
-import { trunk, useStores } from '../../stores';
+import { Platform, SafeAreaView } from 'react-native';
+import { useStores } from '../../stores';
 import { observer } from 'mobx-react';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import 'react-native-get-random-values';
 import '@ethersproject/shims';
-import { getSecureValue, saveSecureValue } from '../../utils/secure.store';
+import { saveSecureValue } from '../../utils/secure.store';
 import ImportPrivateKey from '../../components/ImportPrivateKey';
-import {
-  Box,
-  ButtonText,
-  Button,
-  Center,
-  Text,
-  VStack,
-  Spinner,
-  HStack,
-} from '@gluestack-ui/themed';
+import { Box, ButtonText, Button, VStack } from '@gluestack-ui/themed';
 import MobileHeader from '../../components/MobileHeader';
 import { Wallet } from 'ethers';
 import * as Device from 'expo-device';
 import { getClient } from '../../utils/client';
+import { AUTH_STATE } from '../../stores/user.store';
+import { MobileType } from 'dms-sdk-client';
 
 const Secret = observer(({ navigation }) => {
-  const { pinStore, userStore, secretStore } = useStores();
+  const { userStore, secretStore } = useStores();
   const [client, setClient] = useState();
-  const [address, setAddress] = useState('');
+  const [walletAddress, setWalletAddress] = useState('');
+  const [fromOtherWallet, setFromOtherWallet] = useState(false);
 
   const fetchClient = async () => {
     const { client: client1, address: userAddress } = await getClient();
     console.log('>>>>>>> userAddress :', userAddress);
     setClient(client1);
-    setAddress(userAddress);
+    setWalletAddress(userAddress);
 
     console.log('Secret fetch > client1 :', client1);
     return client1;
@@ -66,7 +55,7 @@ const Secret = observer(({ navigation }) => {
 
   async function tt() {
     userStore.setLoading(true);
-    console.log('------>>>>>');
+    alert('tt q------>>>>>');
     setTimeout(async () => {
       await createWallet();
     }, 100);
@@ -75,22 +64,27 @@ const Secret = observer(({ navigation }) => {
   async function registerPushTokenWithClient(cc) {
     console.log('registerPushTokenWithClient >>>>>>>> cc:', cc);
     const token = userStore.expoPushToken;
-    console.log('token :', token);
+    alert('Secret > token :' + token);
     const language = 'kr';
     const os = Platform.OS === 'android' ? 'android' : 'iOS';
     try {
-      await cc.ledger.registerMobileToken(token, language, os);
+      await cc.ledger.registerMobileToken(
+        token,
+        language,
+        os,
+        MobileType.SHOP_APP,
+      );
     } catch (e) {
       await Clipboard.setStringAsync(JSON.stringify(e));
       console.log('error : ', e);
       alert('푸시 토큰 등록에 실패하였습니다.' + JSON.stringify(e));
     }
   }
-  function resetPinCode() {
+  function resetPinCode(uri = 'ShopReg') {
     userStore.setLoading(false);
     console.log('registerPushToken >>');
     alert('새로운 지갑이 생성 되었습니다.');
-    navigation.navigate('InitPinCodeScreen');
+    navigation.navigate(uri);
   }
 
   async function saveKey(key) {
@@ -110,13 +104,18 @@ const Secret = observer(({ navigation }) => {
     secretStore.setAddress(wallet.address);
     await saveSecureValue('address', wallet.address);
     await saveSecureValue('privateKey', key);
-    const cc = await fetchClient();
+    await fetchClient();
+    userStore.setLoading(false);
+    setFromOtherWallet(true);
+  }
+
+  async function afterSelectingShop() {
     if (Device.isDevice) {
-      await registerPushTokenWithClient(cc);
-      resetPinCode();
+      await registerPushTokenWithClient(client);
+      userStore.setAuthState(AUTH_STATE.DONE);
     } else {
       console.log('Not on device.');
-      resetPinCode();
+      userStore.setAuthState(AUTH_STATE.DONE);
     }
   }
 
@@ -143,7 +142,12 @@ const Secret = observer(({ navigation }) => {
               <ButtonText>지갑 생성하기</ButtonText>
             </Button>
           </Box>
-          <ImportPrivateKey saveKey={saveKey} />
+          <ImportPrivateKey
+            saveKey={saveKey}
+            fromOtherWallet={fromOtherWallet}
+            afterSelectingShop={afterSelectingShop}
+            client={client}
+          />
         </VStack>
       </Box>
     </SafeAreaView>

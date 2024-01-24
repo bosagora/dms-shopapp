@@ -23,7 +23,7 @@ const InitPinCodeScreen = observer(({ navigation }) => {
       onSet={(newPin) => {
         pinStore.setCode(newPin);
         pinStore.setMode(PinCodeT.Modes.Enter);
-        navigation.navigate('ShopReg');
+        navigation.navigate('Secret');
       }}
       onSetCancel={() => navigation.goBack()}
     />

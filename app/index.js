@@ -67,7 +67,7 @@ import ko from '../langs/ko.json';
 import i18n from 'i18next';
 import { useTranslation, initReactI18next } from 'react-i18next';
 import ModalActivityIndicator from 'react-native-modal-activityindicator';
-import MileageAdjustmentHistory from "../screens/wallet/MileageAdjustmentHistory";
+import MileageAdjustmentHistory from '../screens/wallet/MileageAdjustmentHistory';
 
 i18n
   .use(initReactI18next) // passes i18n down to react-i18next
@@ -185,7 +185,7 @@ const App = observer(() => {
       </View>
     );
   } else {
-      // userStore.setLoading(false);
+    // userStore.setLoading(false);
 
     return (
       <BottomSheetModalProvider>
@@ -278,9 +278,12 @@ function MainStackScreen() {
       <MainStack.Screen name='WalletManager' component={WalletManager} />
       <MainStack.Screen name='QRActionSheet' component={QRActionSheet} />
       <MainStack.Screen name='MileageHistory' component={MileageHistory} />
-        <MainStack.Screen name='MileageAdjustmentHistory' component={MileageAdjustmentHistory} />
+      <MainStack.Screen
+        name='MileageAdjustmentHistory'
+        component={MileageAdjustmentHistory}
+      />
 
-        <MainStack.Screen
+      <MainStack.Screen
         name='MileageRedeemNotification'
         component={MileageRedeemNotification}
       />

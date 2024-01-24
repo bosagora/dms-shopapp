@@ -18,7 +18,12 @@ import {
   SelectIcon,
   Icon,
   SelectBackdrop,
-  SelectPortal, SelectDragIndicatorWrapper, SelectContent, SelectItem, Select, SelectDragIndicator,
+  SelectPortal,
+  SelectDragIndicatorWrapper,
+  SelectContent,
+  SelectItem,
+  Select,
+  SelectDragIndicator,
 } from '@gluestack-ui/themed';
 import { SafeAreaView } from 'react-native';
 import { useFormik } from 'formik';
@@ -33,19 +38,14 @@ import * as Clipboard from 'expo-clipboard';
 import { getLocales, getCalendars } from 'expo-localization';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { getClient } from '../../utils/client';
-import {ChevronDownIcon} from "lucide-react-native";
+import { ChevronDownIcon } from 'lucide-react-native';
 
 const registerSchema = yup.object().shape({
-  n1: yup
-    .string()
-    .required()
-
-
+  n1: yup.string().required(),
 });
 
 const registerInitialValues = {
   n1: '',
-
 };
 
 const ShopReg = observer(({ navigation }) => {
@@ -72,14 +72,15 @@ const ShopReg = observer(({ navigation }) => {
     const deviceLocales = getLocales()[0];
     console.log('deviceLocales :', deviceLocales);
     // initiateTimer();
+    alert('regionCode :' + JSON.stringify(deviceLocales));
     userStore.setCurrency(deviceLocales.currencyCode.toLowerCase());
     userStore.setLang(deviceLocales.languageCode.toLowerCase());
     userStore.setCountry(deviceLocales.regionCode.toLowerCase());
     userStore.setLangTag(deviceLocales.languageTag);
-    userStore.setCountryPhoneCode(deviceLocales.regionCode == 'KR' ? '82' : '');
+    userStore.setCountryPhoneCode(
+      deviceLocales.regionCode == 'KR' ? '82' : '82',
+    );
   }, []);
-
-
 
   async function regShop() {
     userStore.setLoading(true);
@@ -91,11 +92,15 @@ const ShopReg = observer(({ navigation }) => {
       name: formik.values?.n1,
       currency: userStore.currency,
       address: address,
-    }
-    console.log('ShopData : ', shopData)
+    };
+    console.log('ShopData : ', shopData);
     const steps = [];
     try {
-      for await (const step of client.shop.add(shopData.shopId, shopData.name, shopData.currency)) {
+      for await (const step of client.shop.add(
+        shopData.shopId,
+        shopData.name,
+        shopData.currency,
+      )) {
         steps.push(step);
         console.log('submit step :', step);
       }
@@ -122,9 +127,9 @@ const ShopReg = observer(({ navigation }) => {
   });
 
   const onPressCurrency = (it) => {
-    console.log('it:', it)
-    userStore.setCurrency(it)
-  }
+    console.log('it:', it);
+    userStore.setCurrency(it);
+  };
   return (
     <SafeAreaView>
       <Box
@@ -157,14 +162,12 @@ const ShopReg = observer(({ navigation }) => {
             alignSelf='center'
             // justifyContent='center'
             w='$full'>
-
-            <VStack py="$2" space="xl">
-
+            <VStack py='$2' space='xl'>
               <FormControl
                 size='md'
                 isRequired={true}
                 isInvalid={!!formik.errors.n1}>
-                <FormControlLabel mb="$1">
+                <FormControlLabel mb='$1'>
                   <FormControlLabelText>상점명</FormControlLabelText>
                 </FormControlLabel>
                 <Input>
@@ -177,28 +180,28 @@ const ShopReg = observer(({ navigation }) => {
                   />
                 </Input>
               </FormControl>
-              <FormControl
-                size='md'
-                isRequired={true}
-                >
-                <FormControlLabel mb="$1">
+              <FormControl size='md' isRequired={true}>
+                <FormControlLabel mb='$1'>
                   <FormControlLabelText>통화</FormControlLabelText>
                 </FormControlLabel>
-                <Select onValueChange={onPressCurrency} selectedValue={userStore.currency} selectedLabel={userStore.currency.toUpperCase()}>
+                <Select
+                  onValueChange={onPressCurrency}
+                  selectedValue={userStore.currency}
+                  selectedLabel={userStore.currency.toUpperCase()}>
                   <SelectTrigger>
-                    <SelectInput placeholder="Select option" />
-                    <SelectIcon mr="$3">
+                    <SelectInput placeholder='Select option' />
+                    <SelectIcon mr='$3'>
                       <Icon as={ChevronDownIcon} />
                     </SelectIcon>
                   </SelectTrigger>
                   <SelectPortal>
                     <SelectBackdrop />
-                    <SelectContent  >
+                    <SelectContent>
                       <SelectDragIndicatorWrapper>
                         <SelectDragIndicator />
                       </SelectDragIndicatorWrapper>
-                      <SelectItem label="KRW" value="krw" defaultValue={true} />
-                      <SelectItem label="USD" value="usd" isDisabled={true} />
+                      <SelectItem label='KRW' value='krw' defaultValue={true} />
+                      <SelectItem label='USD' value='usd' isDisabled={true} />
                     </SelectContent>
                   </SelectPortal>
                 </Select>
@@ -222,7 +225,7 @@ function MobileHeader() {
     <VStack px='$3' mt='$4.5' space='md'>
       <VStack space='xs' ml='$1' my='$4'>
         <Heading color='$textLight50' sx={{ _dark: { color: '$textDark50' } }}>
-         상점 등록
+          상점 등록
         </Heading>
         <Text
           fontSize='$md'

@@ -32,6 +32,7 @@ const Permissions = observer(({ navigation }) => {
       'Permissions Screen > expoPushToken :',
       userStore.expoPushToken,
     );
+    userStore.setLoading(false);
   }, []);
 
   function checkPushToken() {
@@ -86,8 +87,8 @@ const Permissions = observer(({ navigation }) => {
               정상적인 서비스 이용이 가능합니다.
             </Text>
             <Text my='$1.5' _dark={{ color: '$textLight200' }} fontSize='$xs'>
-              알림 설정이 되어있지 않은 경우, 설정 > KIOS > 알림 에서 '알림
-              허용' 을 선택해 주세요.
+              알림 설정이 되어있지 않은 경우, 설정 &gt; KIOS &gt; 알림 에서
+              '알림 허용' 을 선택해 주세요.
             </Text>
           </VStack>
 

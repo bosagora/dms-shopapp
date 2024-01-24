@@ -28,11 +28,17 @@ import {
   View,
   InputField,
   ButtonGroup,
+  Icon,
+  ModalCloseButton,
+  ModalHeader,
+  CloseIcon,
 } from '@gluestack-ui/themed';
 import MobileHeader from '../../components/MobileHeader'; //for ethers.js
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { getClient } from '../../utils/client';
 import * as Device from 'expo-device';
+import { ContractUtils, MobileType } from 'dms-sdk-client';
+import { AUTH_STATE } from '../../stores/user.store';
 
 const { Wallet } = ethers;
 
@@ -41,18 +47,14 @@ const WalletManager = observer(({ navigation }) => {
   const [privateKey, setPrivateKey] = useState(
     '0000000000000000000000000000000000000000000000000000000000000001',
   );
-
+  const [showModal, setShowModal] = useState(false);
   const [client, setClient] = useState();
   const [address, setAddress] = useState('');
 
+  const [fromOtherWallet, setFromOtherWallet] = useState(false);
+
   const fetchClient = async () => {
     const { client: client1, address: userAddress } = await getClient();
-    console.log(
-      '>>>>>>> userAddress :',
-      userAddress,
-      'EXAMPLE_ENV',
-      process.env.EXAMPLE_ENV,
-    );
     setClient(client1);
     setAddress(userAddress);
 
@@ -66,7 +68,13 @@ const WalletManager = observer(({ navigation }) => {
     const language = 'kr';
     const os = Platform.OS === 'android' ? 'android' : 'iOS';
     try {
-      await cc.ledger.registerMobileToken(token, language, os);
+      await cc.ledger.registerMobileToken(
+        token,
+        language,
+        os,
+        MobileType.SHOP_APP,
+      );
+      alert('불러온 지갑이 적용 되었습니다.');
       return true;
     } catch (e) {
       await Clipboard.setStringAsync(JSON.stringify(e));
@@ -103,26 +111,27 @@ const WalletManager = observer(({ navigation }) => {
     secretStore.setAddress(wallet.address);
     await saveSecureValue('address', wallet.address);
     await saveSecureValue('privateKey', key);
+
+    const shopId = ContractUtils.getShopId(wallet.address);
+    console.log('-------------------> wallet.address :', wallet.address);
+    console.log('shopId :', shopId);
+    userStore.setShopId(shopId);
     const time = Math.round(+new Date() / 1000);
 
-    const cc = await fetchClient();
-    let ret = false;
-    if (Device.isDevice) {
-      ret = await registerPushTokenWithClient(cc);
-    } else {
-      ret = true;
-      console.log('Not on device.');
-    }
+    await fetchClient();
+    userStore.setLoading(false);
+    setFromOtherWallet(true);
+  }
 
-    if (ret) {
-      loyaltyStore.setLastUpdateTime(time);
-      alert('불러온 지갑이 적용 되었습니다.');
+  async function afterSelectingShop() {
+    if (Device.isDevice) {
+      await registerPushTokenWithClient(client);
       navigation.navigate('Wallet');
     } else {
-      alert('지갑 불러오기에 실패하였습니다. 다시 시도해 주세요.');
+      console.log('Not on device.');
+      navigation.navigate('Wallet');
     }
   }
-  const [showModal, setShowModal] = useState(false);
   return (
     <SafeAreaView>
       <Box
@@ -143,7 +152,12 @@ const WalletManager = observer(({ navigation }) => {
               <ButtonText>지갑 내보내기</ButtonText>
             </Button>
           </Box>
-          <ImportPrivateKey saveKey={saveKey} />
+          <ImportPrivateKey
+            saveKey={saveKey}
+            fromOtherWallet={fromOtherWallet}
+            afterSelectingShop={afterSelectingShop}
+            client={client}
+          />
         </VStack>
         <Box>
           <KeyboardAwareScrollView
@@ -164,9 +178,14 @@ const WalletManager = observer(({ navigation }) => {
                 }}>
                 <ModalBackdrop />
                 <ModalContent maxWidth='$96'>
+                  <ModalHeader>
+                    <Heading size='lg'>지갑 비공개키</Heading>
+                    <ModalCloseButton>
+                      <Icon as={CloseIcon} />
+                    </ModalCloseButton>
+                  </ModalHeader>
                   <ModalBody p='$5'>
                     <VStack space='xs' mb='$4'>
-                      <Heading>지갑 비공개키</Heading>
                       <Text size='sm'>
                         이 키를 다른 기기에 설치된 THE9 앱에 붙여 넣으면 현재
                         지갑을 복구해 사용할 수 있습니다. (다른 기기의 THE9
@@ -182,27 +201,35 @@ const WalletManager = observer(({ navigation }) => {
                       <FormControl>
                         <FormControlHelper>
                           <FormControlHelperText>
-                            여기에 비공개 키 문자열을 붙여넣으세요.
+                            비공개 키
                           </FormControlHelperText>
                         </FormControlHelper>
                         <Input>
                           <InputField value={privateKey} />
                         </Input>
                       </FormControl>
+                      <FormControl>
+                        <FormControlHelper>
+                          <FormControlHelperText>상점 ID</FormControlHelperText>
+                        </FormControlHelper>
+                        <Input>
+                          <InputField value={userStore.shopId} />
+                        </Input>
+                      </FormControl>
                     </VStack>
 
                     <ButtonGroup space='md' alignSelf='center'>
-                      <Button
-                        variant='outline'
-                        py='$2.5'
-                        action='secondary'
-                        onPress={() => {
-                          setShowModal(false);
-                        }}>
-                        <ButtonText fontSize='$sm' fontWeight='$medium'>
-                          Close
-                        </ButtonText>
-                      </Button>
+                      {/*<Button*/}
+                      {/*  variant='outline'*/}
+                      {/*  py='$2.5'*/}
+                      {/*  action='secondary'*/}
+                      {/*  onPress={() => {*/}
+                      {/*    setShowModal(false);*/}
+                      {/*  }}>*/}
+                      {/*  <ButtonText fontSize='$sm' fontWeight='$medium'>*/}
+                      {/*    Close*/}
+                      {/*  </ButtonText>*/}
+                      {/*</Button>*/}
                       <Button
                         variant='solid'
                         bg='$success700'
@@ -212,7 +239,19 @@ const WalletManager = observer(({ navigation }) => {
                           setShowModal(false);
                         }}>
                         <ButtonText fontSize='$sm' fontWeight='$medium'>
-                          Copy
+                          비공개키 복사
+                        </ButtonText>
+                      </Button>
+                      <Button
+                        variant='solid'
+                        bg='$success700'
+                        borderColor='$success700'
+                        onPress={async () => {
+                          await Clipboard.setStringAsync(userStore.shopId);
+                          setShowModal(false);
+                        }}>
+                        <ButtonText fontSize='$sm' fontWeight='$medium'>
+                          상점 ID 복사
                         </ButtonText>
                       </Button>
                     </ButtonGroup>

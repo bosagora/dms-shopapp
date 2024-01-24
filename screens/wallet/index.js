@@ -76,12 +76,13 @@ const Index = observer(({ navigation }) => {
     const isUp = await client1.ledger.isRelayUp();
     console.log('isUp:', isUp);
 
-    await fetchBalances(client1);
+    await fetchBalances(client1, userAddress);
   }
-  async function fetchBalances(c) {
+  async function fetchBalances(c, userAddress) {
     if (intervalId > 0) clearInterval(intervalId);
 
     const id = setInterval(async () => {
+      console.log('>> << >> userStore.shopId : ', userStore.shopId);
       const shopInfo = await c.shop.getShopInfo(userStore.shopId);
       console.log('shopInfo :', shopInfo);
       setAdjustmentStatus(shopInfo.withdrawStatus);
@@ -223,7 +224,7 @@ const Index = observer(({ navigation }) => {
               }}>
               <Box>
                 <Heading _dark={{ color: '$textLight200' }} size='lg'>
-                  {userStore.shopName} v0.2 - {process.env.EXPO_PUBLIC_ENV} -{' '}
+                  {userStore.shopName} v0.5.2 - {process.env.EXPO_PUBLIC_ENV} -{' '}
                   {process.env.ENVIRONMENT}
                 </Heading>
                 <Text

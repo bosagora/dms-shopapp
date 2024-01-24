@@ -23,7 +23,7 @@ const Term = observer(({ navigation }) => {
   const [values, setValues] = useState(['T1', 'T2']);
   function agreeTerm() {
     if (values.includes('T1') && values.includes('T2')) {
-      navigation.navigate('Secret');
+      navigation.navigate('InitPinCodeScreen');
     }
   }
   return (
