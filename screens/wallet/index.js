@@ -80,9 +80,9 @@ const Index = observer(({ navigation }) => {
     const isUp = await client1.ledger.isRelayUp();
     console.log('isUp:', isUp);
 
-    await fetchBalances(client1, userAddress);
+    await fetchBalances(client1);
   }
-  async function fetchBalances(c, userAddress) {
+  async function fetchBalances(c) {
     if (intervalId > 0) clearInterval(intervalId);
 
     const id = setInterval(async () => {
@@ -157,7 +157,6 @@ const Index = observer(({ navigation }) => {
           alert('정산 금액이 정상적으로 요청되었습니다.');
         }
         userStore.setLoading(false);
-        // await fetchBalances(client);
       } catch (e) {
         await Clipboard.setStringAsync(JSON.stringify(e));
         console.log('error : ', e);
@@ -176,7 +175,6 @@ const Index = observer(({ navigation }) => {
           alert('정산이 정상적으로 완료 되었습니다.');
         }
         userStore.setLoading(false);
-        // await fetchBalances(client);
       } catch (e) {
         await Clipboard.setStringAsync(JSON.stringify(e));
         console.log('error : ', e);
@@ -236,7 +234,7 @@ const Index = observer(({ navigation }) => {
               }}>
               <Box>
                 <Heading _dark={{ color: '$textLight200' }} size='lg'>
-                  {userStore.shopName} v0.6.5 - {process.env.EXPO_PUBLIC_ENV} -{' '}
+                  {userStore.shopName} v0.6.7 - {process.env.EXPO_PUBLIC_ENV} -{' '}
                   {process.env.ENVIRONMENT}
                 </Heading>
                 <Text

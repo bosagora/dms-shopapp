@@ -31,6 +31,7 @@ import QRCode from 'react-native-qrcode-svg';
 import { useStores } from '../stores';
 import { observer } from 'mobx-react';
 import * as Clipboard from 'expo-clipboard';
+import { truncateMiddleString } from '../utils/convert';
 
 // export default function QRActionSheet() {
 const QRActionSheet = observer(() => {
@@ -69,8 +70,8 @@ const QRActionSheet = observer(() => {
                       mx: '$5',
                     },
                     _dark: {
-                      bg: '$backgroundDark700',
-                      borderColor: '$borderDark800',
+                      bg: '$borderLight0',
+                      borderColor: '$borderLight0',
                     },
                   }}>
                   <Box w='$full' p={20}>
@@ -80,10 +81,11 @@ const QRActionSheet = observer(() => {
                   </Box>
                   <VStack px='$6' pt='$4' pb='$6'>
                     <Text
-                      _dark={{ color: '$textLight200' }}
-                      fontSize='$sm'
-                      my='$1.5'>
-                      {walletAddress}
+                      color='black'
+                      _dark={{ color: '$black' }}
+                      size='sm'
+                      p='$1.5'>
+                      {truncateMiddleString(walletAddress, 24)}
                     </Text>
                     <Button
                       variant='solid'
