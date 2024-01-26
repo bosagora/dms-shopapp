@@ -80,52 +80,57 @@ const Index = observer(({ navigation }) => {
     const isUp = await client1.ledger.isRelayUp();
     console.log('isUp:', isUp);
 
+    await setData(client1);
     await fetchBalances(client1);
   }
   async function fetchBalances(c) {
     if (intervalId > 0) clearInterval(intervalId);
 
     const id = setInterval(async () => {
-      const pkey = await getSecureValue('privateKey');
-      console.log('pkey:', pkey);
-      console.log('privateKey:', privateKey);
-      if (pkey !== privateKey) {
-        await c.useSigner(new Wallet(pkey));
-        setPrivateKey(pkey);
-      }
-
-      console.log('>> << >> userStore.shopId : ', userStore.shopId);
-      const shopInfo = await c.shop.getShopInfo(userStore.shopId);
-      console.log('shopInfo :', shopInfo);
-      setAdjustmentStatus(shopInfo.withdrawStatus);
-
-      const convProvidedAmount = new Amount(shopInfo.providedAmount, 18);
-      const convUsedAmount = new Amount(shopInfo.usedAmount, 18);
-      const convWithdrawAmount = new Amount(shopInfo.withdrawAmount, 18);
-      const convWithdrawnAmount = new Amount(shopInfo.withdrawnAmount, 18);
-      const withdrawableAmountTmp =
-        shopInfo.withdrawStatus === 0
-          ? await c.shop.getWithdrawableAmount(userStore.shopId)
-          : new Amount(0, 18).value;
-      const convWithdrawableAmount = new Amount(withdrawableAmountTmp, 18);
-
-      setProvidedAmount(convProvidedAmount);
-      setUsedAmount(convUsedAmount);
-      setWithdrawAmount(convWithdrawAmount);
-      setWithdrawnAmount(convWithdrawnAmount);
-      setWithdrawableAmount(convWithdrawableAmount);
-      // console.log('provided Amount:', convProvidedAmount.toBOAString());
-      // console.log('used Amount:', convProvidedAmount.toBOAString());
-      // console.log('withdraw Amount:', convWithdrawAmount.toBOAString());
-      // console.log('withdrawn Amount:', convWithdrawnAmount.toBOAString());
-      console.log('withdrawable Amount:', convWithdrawableAmount.toBOAString());
-      // console.log('wAdjustmentStatus :', adjustmentStatus);
-      // console.log(
-      //   ' withdrawableAmount.value.gt(BigNumber.from(0)) :',
-      //   withdrawableAmount.value.gt(BigNumber.from(0)),
-      // );
+      await setData(c);
     }, 5000);
     setIntervalId(id);
+  }
+
+  async function setData(c) {
+    const pkey = await getSecureValue('privateKey');
+    console.log('pkey:', pkey);
+    console.log('privateKey:', privateKey);
+    if (pkey !== privateKey) {
+      await c.useSigner(new Wallet(pkey));
+      setPrivateKey(pkey);
+    }
+
+    console.log('>> << >> userStore.shopId : ', userStore.shopId);
+    const shopInfo = await c.shop.getShopInfo(userStore.shopId);
+    console.log('shopInfo :', shopInfo);
+    setAdjustmentStatus(shopInfo.withdrawStatus);
+
+    const convProvidedAmount = new Amount(shopInfo.providedAmount, 18);
+    const convUsedAmount = new Amount(shopInfo.usedAmount, 18);
+    const convWithdrawAmount = new Amount(shopInfo.withdrawAmount, 18);
+    const convWithdrawnAmount = new Amount(shopInfo.withdrawnAmount, 18);
+    const withdrawableAmountTmp =
+      shopInfo.withdrawStatus === 0
+        ? await c.shop.getWithdrawableAmount(userStore.shopId)
+        : new Amount(0, 18).value;
+    const convWithdrawableAmount = new Amount(withdrawableAmountTmp, 18);
+
+    setProvidedAmount(convProvidedAmount);
+    setUsedAmount(convUsedAmount);
+    setWithdrawAmount(convWithdrawAmount);
+    setWithdrawnAmount(convWithdrawnAmount);
+    setWithdrawableAmount(convWithdrawableAmount);
+    // console.log('provided Amount:', convProvidedAmount.toBOAString());
+    // console.log('used Amount:', convProvidedAmount.toBOAString());
+    // console.log('withdraw Amount:', convWithdrawAmount.toBOAString());
+    // console.log('withdrawn Amount:', convWithdrawnAmount.toBOAString());
+    console.log('withdrawable Amount:', convWithdrawableAmount.toBOAString());
+    // console.log('wAdjustmentStatus :', adjustmentStatus);
+    // console.log(
+    //   ' withdrawableAmount.value.gt(BigNumber.from(0)) :',
+    //   withdrawableAmount.value.gt(BigNumber.from(0)),
+    // );
   }
   const handleQRSheet = async () => {
     // await fetchPoints();
@@ -234,7 +239,7 @@ const Index = observer(({ navigation }) => {
               }}>
               <Box>
                 <Heading _dark={{ color: '$textLight200' }} size='lg'>
-                  {userStore.shopName} v0.5.3 - {process.env.EXPO_PUBLIC_ENV}
+                  {userStore.shopName} v0.5.4 - {process.env.EXPO_PUBLIC_ENV}
                 </Heading>
                 <Text
                   _dark={{ color: '$textLight200' }}
