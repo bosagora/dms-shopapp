@@ -167,7 +167,7 @@ const PhoneAuth = observer(({ navigation }) => {
       await Clipboard.setStringAsync(JSON.stringify(e));
       console.log('error : ', e);
       userStore.setLoading(false);
-      alert('전화번호 등록에 실패하였습니다.' + JSON.stringify(e));
+      alert('전화번호 등록에 실패하였습니다.' + JSON.stringify(e.message));
     }
   }
 
@@ -191,7 +191,7 @@ const PhoneAuth = observer(({ navigation }) => {
       await Clipboard.setStringAsync(JSON.stringify(e));
       console.log('error : ', e);
       userStore.setLoading(false);
-      alert('전화번호 인증에 실패하였습니다.' + JSON.stringify(e));
+      alert('전화번호 인증에 실패하였습니다.' + JSON.stringify(e.message));
     }
   }
   function completeAuth() {

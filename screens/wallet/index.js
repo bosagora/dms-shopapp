@@ -161,7 +161,7 @@ const Index = observer(({ navigation }) => {
         await Clipboard.setStringAsync(JSON.stringify(e));
         console.log('error : ', e);
         userStore.setLoading(false);
-        alert('정산금액 요청에 실패하였습니다.' + JSON.stringify(e));
+        alert('정산금액 요청에 실패하였습니다.' + JSON.stringify(e.message));
       }
     } else if (adjustmentMode === 'complete') {
       try {
@@ -179,7 +179,7 @@ const Index = observer(({ navigation }) => {
         await Clipboard.setStringAsync(JSON.stringify(e));
         console.log('error : ', e);
         userStore.setLoading(false);
-        alert('정산 완료에 실패하였습니다.' + JSON.stringify(e));
+        alert('정산 완료에 실패하였습니다.' + JSON.stringify(e.message));
       }
     }
   };
@@ -234,8 +234,7 @@ const Index = observer(({ navigation }) => {
               }}>
               <Box>
                 <Heading _dark={{ color: '$textLight200' }} size='lg'>
-                  {userStore.shopName} v0.6.7 - {process.env.EXPO_PUBLIC_ENV} -{' '}
-                  {process.env.ENVIRONMENT}
+                  {userStore.shopName} v0.5.1 - {process.env.EXPO_PUBLIC_ENV}
                 </Heading>
                 <Text
                   _dark={{ color: '$textLight200' }}

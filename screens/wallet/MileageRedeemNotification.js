@@ -43,7 +43,6 @@ const MileageRedeemNotification = observer(({ navigation }) => {
       console.log('web3Status :', web3Status);
       const isUp = await client1.ledger.isRelayUp();
       console.log('isUp:', isUp);
-      alert('payment :' + JSON.stringify(loyaltyStore.payment));
       await savePaymnentInfo(client1, loyaltyStore.payment.id);
     }
     fetchClient().then(() => console.log('end of fetchClient'));
@@ -76,7 +75,6 @@ const MileageRedeemNotification = observer(({ navigation }) => {
     try {
       const steps = [];
       const isUp = await client.ledger.isRelayUp();
-      alert('confirmCancel > isUp:' + isUp);
       for await (const step of client.ledger.approveCancelPayment(
         loyaltyStore.payment.id,
         purchaseId,
@@ -84,7 +82,6 @@ const MileageRedeemNotification = observer(({ navigation }) => {
       )) {
         steps.push(step);
         console.log('confirmCancel step :', step);
-        alert('confirmCancel step :' + step);
         switch (step.key) {
           case NormalSteps.PREPARED:
             break;
@@ -109,7 +106,7 @@ const MileageRedeemNotification = observer(({ navigation }) => {
       alert(
         '취소 승인에 실패하였습니다. 관리자에게 문의하세요.' +
           'e:' +
-          JSON.stringify(e),
+          JSON.stringify(e.message),
       );
     }
   }

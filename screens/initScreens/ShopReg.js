@@ -72,7 +72,7 @@ const ShopReg = observer(({ navigation }) => {
     const deviceLocales = getLocales()[0];
     console.log('deviceLocales :', deviceLocales);
     // initiateTimer();
-    alert('regionCode :' + JSON.stringify(deviceLocales));
+    // alert('regionCode :' + JSON.stringify(deviceLocales));
     userStore.setCurrency(deviceLocales.currencyCode.toLowerCase());
     userStore.setLang(deviceLocales.languageCode.toLowerCase());
     userStore.setCountry(deviceLocales.regionCode.toLowerCase());
@@ -109,7 +109,7 @@ const ShopReg = observer(({ navigation }) => {
       await Clipboard.setStringAsync(JSON.stringify(e));
       console.log('error : ', e);
       userStore.setLoading(false);
-      alert('상점 등록에 실패하였습니다.' + JSON.stringify(e));
+      alert('상점 등록에 실패하였습니다.' + JSON.stringify(e.message));
     }
   }
 

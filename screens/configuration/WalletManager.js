@@ -79,7 +79,7 @@ const WalletManager = observer(({ navigation }) => {
     } catch (e) {
       await Clipboard.setStringAsync(JSON.stringify(e));
       console.log('error : ', e);
-      alert('푸시 토큰 등록에 실패하였습니다.' + JSON.stringify(e));
+      alert('푸시 토큰 등록에 실패하였습니다.' + JSON.stringify(e.message));
       return false;
     }
   }
