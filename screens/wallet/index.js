@@ -234,7 +234,7 @@ const Index = observer(({ navigation }) => {
               }}>
               <Box>
                 <Heading _dark={{ color: '$textLight200' }} size='lg'>
-                  {userStore.shopName} v0.5.1 - {process.env.EXPO_PUBLIC_ENV}
+                  {userStore.shopName} v0.5.2 - {process.env.EXPO_PUBLIC_ENV}
                 </Heading>
                 <Text
                   _dark={{ color: '$textLight200' }}

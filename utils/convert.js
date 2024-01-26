@@ -6,6 +6,8 @@ export function truncateString(str, num = 10) {
   }
 }
 export function truncateMiddleString(str, num = 10) {
+  console.log('str :', str);
+  if (!str) str = '';
   if (str.length > num) {
     return str.slice(0, num / 2 + 2) + ' ... ' + str.slice(-num / 2);
   } else {

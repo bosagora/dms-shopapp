@@ -85,7 +85,7 @@ const QRActionSheet = observer(() => {
                       _dark={{ color: '$black' }}
                       size='sm'
                       p='$1.5'>
-                      {truncateMiddleString(walletAddress, 24)}
+                      {truncateMiddleString(walletAddress || '', 24)}
                     </Text>
                     <Button
                       variant='solid'
