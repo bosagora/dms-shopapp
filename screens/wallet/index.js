@@ -234,7 +234,7 @@ const Index = observer(({ navigation }) => {
               }}>
               <Box>
                 <Heading _dark={{ color: '$textLight200' }} size='lg'>
-                  {userStore.shopName} v0.5.2 - {process.env.EXPO_PUBLIC_ENV}
+                  {userStore.shopName} v0.5.3 - {process.env.EXPO_PUBLIC_ENV}
                 </Heading>
                 <Text
                   _dark={{ color: '$textLight200' }}
@@ -253,7 +253,7 @@ const Index = observer(({ navigation }) => {
                   <Pressable
                     onPress={() => navigation.navigate('MileageHistory')}>
                     <Text fontSize='$sm' color='$violet400'>
-                      적립/사용 내역
+                      제공/사용 내역
                     </Text>
                   </Pressable>
                 </HStack>

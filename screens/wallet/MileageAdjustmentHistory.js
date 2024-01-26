@@ -160,12 +160,10 @@ const MileageAdjustmentHistory = observer(({ navigation }) => {
                   <Box>
                     <Text>
                       {convertProperValue(
-                        item.action === 1
-                          ? new Amount(
-                              BigNumber.from(item.amount),
-                              9,
-                            ).toBOAString()
-                          : item.amount,
+                        new Amount(
+                          BigNumber.from(item.amount),
+                          9,
+                        ).toBOAString(),
                       )}{' '}
                     </Text>
                   </Box>

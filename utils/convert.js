@@ -19,7 +19,8 @@ function toFix(str, dec = 2) {
   return str.slice(0, index + (dec + 1));
 }
 
-export function convertProperValue(str, dec = 2, trunc = 10) {
+export function convertProperValue(str, currency = 'krw', dec = 2, trunc = 10) {
+  if (currency === 'krw') dec = -1;
   return numberWithCommas(truncateString(toFix(str, dec), trunc));
 }
 

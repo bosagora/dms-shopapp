@@ -173,12 +173,11 @@ const MileageHistory = observer(({ navigation }) => {
                     <Text>
                       {item.actionName === 'CANCEL' ? '-' : ''}
                       {convertProperValue(
-                        item.action === 1
-                          ? new Amount(
-                              BigNumber.from(item.amount),
-                              9,
-                            ).toBOAString()
-                          : item.amount,
+                        new Amount(
+                          BigNumber.from(item.amount),
+                          9,
+                        ).toBOAString(),
+                        userStore.currency,
                       )}{' '}
                     </Text>
                   </Box>
