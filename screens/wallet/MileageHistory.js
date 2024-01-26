@@ -68,7 +68,7 @@ const MileageHistory = observer(({ navigation }) => {
         },
       );
 
-      console.log('len :', res);
+      // console.log('len :', res);
       console.log('len :', res.shopTradeHistories?.length);
       const history = res.shopTradeHistories
         .filter((it) => {
@@ -78,6 +78,7 @@ const MileageHistory = observer(({ navigation }) => {
           return {
             id: it.id,
             action: it.action,
+            increase: it.increase,
             actionName:
               it.action === 1
                 ? 'PROVIDED'
@@ -174,7 +175,7 @@ const MileageHistory = observer(({ navigation }) => {
                       {item.actionName === 'CANCEL' ? '-' : ''}
                       {convertProperValue(
                         new Amount(
-                          BigNumber.from(item.amount),
+                          BigNumber.from(item.increase),
                           9,
                         ).toBOAString(),
                         userStore.currency,

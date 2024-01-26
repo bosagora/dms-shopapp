@@ -75,12 +75,13 @@ const MileageAdjustmentHistory = observer(({ navigation }) => {
           return {
             id: it.id,
             action: it.action,
+            increase: it.increase,
             actionName: it.action === 11 ? 'OPEN_WITHDRAWN' : 'CLOSE_WITHDRAWN',
             amount: it.action === 11 ? it.increase : it.increase,
             blockTimestamp: it.blockTimestamp,
           };
         });
-      console.log('history :', history.slice(0, 3));
+      console.log('adjustment history :', history.slice(0, 3));
 
       setHistoryData(history);
     };
@@ -161,7 +162,7 @@ const MileageAdjustmentHistory = observer(({ navigation }) => {
                     <Text>
                       {convertProperValue(
                         new Amount(
-                          BigNumber.from(item.amount),
+                          BigNumber.from(item.increase),
                           9,
                         ).toBOAString(),
                       )}{' '}
