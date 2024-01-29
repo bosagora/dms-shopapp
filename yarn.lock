@@ -4821,17 +4821,17 @@ dir-glob@^3.0.1:
   dependencies:
     path-type "^4.0.0"
 
-dms-osx-lib@^2.4.1:
-  version "2.4.1"
-  resolved "https://registry.yarnpkg.com/dms-osx-lib/-/dms-osx-lib-2.4.1.tgz#9959af5ed1aa512170210115b155d2815b814cb3"
-  integrity sha512-yquvsqf+l7IfRpKtzjcx/qCDxWqAEr5pcqBNeoJCErhfCi52uEhZJHLyV9mjE/qAFRefz5+6rS+OM+ugzvm2wg==
+dms-osx-lib@^2.4.2:
+  version "2.4.2"
+  resolved "https://registry.yarnpkg.com/dms-osx-lib/-/dms-osx-lib-2.4.2.tgz#d61a889692052d46928fde07cb1a0a6c174fb544"
+  integrity sha512-ZnvIXe91DFEisdhfEWmZFNlfadkPTkGU2br0g/6K7JTDKxm7z0CgYeIM3LyEi91Aq/woZBilnOLLM8ylSbo9mQ==
   dependencies:
     ethers "npm:boa-ethers2@^5.7.9"
 
-dms-sdk-client@^2.4.3:
-  version "2.4.3"
-  resolved "https://registry.yarnpkg.com/dms-sdk-client/-/dms-sdk-client-2.4.3.tgz#86ee00d845e6e9e92e4736e8324ca7a542edda4c"
-  integrity sha512-6gZXq7VGxzpQ1sU9MQaOwRdJXMWI/27z3LjcAZ1GIIHahpHbWweYr8MIBMTI6a3FdE15Bx5qU5wsDGIJgk0cNw==
+dms-sdk-client@^2.5.0:
+  version "2.5.0"
+  resolved "https://registry.yarnpkg.com/dms-sdk-client/-/dms-sdk-client-2.5.0.tgz#a22cfd9bb6068bc5d862ce9126e72f5da418122e"
+  integrity sha512-3UyML1qJIjBq+P5BMnsPlbZ1eqq7JID+d+2qLCDbWGNuWgvQG8mo+bkpQcLbioElo81ha2cyuuw/HXMPtw1Lgg==
   dependencies:
     "@ethersproject/abi" "^5.7.0"
     "@ethersproject/abstract-signer" "^5.7.0"
@@ -4846,7 +4846,7 @@ dms-sdk-client@^2.4.3:
     "@ethersproject/random" "^5.7.0"
     "@ethersproject/wallet" "^5.7.0"
     del-osx-lib "^2.0.0"
-    dms-osx-lib "^2.4.1"
+    dms-osx-lib "^2.4.2"
     dms-sdk-common "^1.0.3"
     graphql "^16.5.0"
     graphql-request "^4.3.0"
