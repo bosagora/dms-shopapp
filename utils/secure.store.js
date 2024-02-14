@@ -7,7 +7,7 @@ export async function saveSecureValue(key, value) {
 export async function getSecureValue(key) {
   let result = await SecureStore.getItemAsync(key);
   if (result) {
-    console.log("🔐 Here's your value 🔐 \n" + result);
+    // console.log("🔐 Here's your value 🔐 \n" + result);
     return result;
   } else {
     console.log('No values stored under that key.');

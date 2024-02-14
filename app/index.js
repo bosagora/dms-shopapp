@@ -63,25 +63,24 @@ TextInput.defaultProps = TextInput.defaultProps || {};
 TextInput.defaultProps.allowFontScaling = false;
 
 import ko from '../langs/ko.json';
+import en from '../langs/en.json';
 
-import i18n from 'i18next';
+import * as I18N from 'i18next';
 import { useTranslation, initReactI18next } from 'react-i18next';
 import ModalActivityIndicator from 'react-native-modal-activityindicator';
 import MileageAdjustmentHistory from '../screens/wallet/MileageAdjustmentHistory';
+import TermActionSheet from '../screens/TermActionSheet';
+import PrivacyActionSheet from '../screens/PrivacyActionSheet';
+import { getLocales } from 'expo-localization';
 
-i18n
-  .use(initReactI18next) // passes i18n down to react-i18next
+I18N.use(initReactI18next) // passes i18n down to react-i18next
   .init({
     compatibilityJSON: 'v3',
     resources: {
-      en: {
-        translation: {
-          welcome: 'Welcome to React and react-i18next',
-        },
-      },
+      en: { translation: en },
       ko: { translation: ko },
     },
-    lng: 'ko', // if you're using a language detector, do not define the lng option
+    lng: 'en', // if you're using a language detector, do not define the lng option
     fallbackLng: 'en',
 
     interpolation: {
@@ -93,6 +92,7 @@ const App = observer(() => {
   const { pinStore, userStore, loyaltyStore } = useStores();
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
+  const { i18n } = useTranslation();
 
   const { expoPushToken } = usePushNotification(userStore, loyaltyStore);
   useEffect(() => {
@@ -104,10 +104,48 @@ const App = observer(() => {
       if (expoPushToken !== undefined && expoPushToken?.data?.length > 10) {
         userStore.setExpoPushToken(expoPushToken.data);
       }
+
+      userStore.setLoading(false);
+      console.log('app.index > userStore : ', userStore);
+      if (userStore.currency === '') {
+        console.log('init locale');
+        const deviceLocales = getLocales()[0];
+        console.log('deviceLocales :', deviceLocales);
+
+        userStore.setCurrency(deviceLocales.currencyCode);
+        userStore.setLang(deviceLocales.languageCode);
+        userStore.setCountry(deviceLocales.regionCode);
+        userStore.setLangTag(deviceLocales.languageTag);
+        userStore.setCountryPhoneCode(
+          deviceLocales.regionCode == 'KR' ? '82' : '',
+        );
+        i18n
+          .changeLanguage(deviceLocales.languageCode, afterChangeLang)
+          .then(() => {})
+          .catch((error) => {
+            console.log(error);
+          });
+      } else {
+        console.log('userStore.lang :', userStore.lang);
+        i18n
+          .changeLanguage(userStore.lang, afterChangeLang)
+          .then()
+          .catch((error) => {
+            console.log(error);
+          });
+      }
     };
     rehydrate();
-    i18n.changeLanguage(userStore.languageTag);
   }, []);
+  function afterChangeLang(it) {
+    console.log('afterChangeLang:', it);
+    i18n
+      .changeLanguage('en')
+      .then()
+      .catch((error) => {
+        console.log(error);
+      });
+  }
   let init = false;
   useEffect(() => {
     // 앱 초기 등록 화면이 아니고
@@ -217,6 +255,8 @@ const App = observer(() => {
             )}
 
             <QRActionSheet />
+            <TermActionSheet />
+            <PrivacyActionSheet />
           </GluestackUIProvider>
         </NavigationContainer>
         <PinCodeScreen />

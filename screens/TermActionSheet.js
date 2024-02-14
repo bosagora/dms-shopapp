@@ -25,17 +25,17 @@ import {
   Image,
   Text,
 } from '@gluestack-ui/themed';
-import { KeyboardAvoidingView, Platform } from 'react-native';
+import {KeyboardAvoidingView, Platform, ScrollView} from 'react-native';
 import { getSecureValue } from '../utils/secure.store';
 import QRCode from 'react-native-qrcode-svg';
 import { useStores } from '../stores';
 import { observer } from 'mobx-react';
 import * as Clipboard from 'expo-clipboard';
 import { truncateMiddleString } from '../utils/convert';
-import { useTranslation } from 'react-i18next';
+import {useTranslation} from "react-i18next";
 
 // export default function QRActionSheet() {
-const QRActionSheet = observer(() => {
+const TermActionSheet = observer(() => {
   const { t } = useTranslation();
   const { secretStore } = useStores();
   const [walletAddress, SetWalletAddress] = useState('');
@@ -47,17 +47,18 @@ const QRActionSheet = observer(() => {
     fetchWalletAddress();
   }, [secretStore.address]);
   const handleClose = () =>
-    secretStore.setShowQRSheet(!secretStore.showQRSheet);
+    secretStore.setShowTermSheet(!secretStore.showTermSheet);
   return (
     <Box>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        <Actionsheet isOpen={secretStore.showQRSheet} onClose={handleClose}>
+        <Actionsheet isOpen={secretStore.showTermSheet} onClose={handleClose}>
           <ActionsheetBackdrop bg='$borderLight200' />
           <ActionsheetContent maxHeight='75%'>
             <ActionsheetDragIndicatorWrapper>
               <ActionsheetDragIndicator />
             </ActionsheetDragIndicatorWrapper>
+            <ScrollView>
             <VStack w='$full' p={20}>
               <HStack justifyContent='center' alignItems='center' space='md'>
                 <Box
@@ -77,9 +78,7 @@ const QRActionSheet = observer(() => {
                     },
                   }}>
                   <Box w='$full' p={20}>
-                    {walletAddress ? (
-                      <QRCode size={250} value={walletAddress} />
-                    ) : null}
+
                   </Box>
                   <VStack px='$6' pt='$4' pb='$6'>
                     <Text
@@ -87,23 +86,24 @@ const QRActionSheet = observer(() => {
                       _dark={{ color: '$black' }}
                       size='sm'
                       p='$1.5'>
-                      {truncateMiddleString(walletAddress || '', 24)}
+
+                      {t('term.term.detail')}
                     </Text>
                     <Button
                       variant='solid'
                       action='primary'
                       onPress={async () => {
-                        await Clipboard.setStringAsync(walletAddress);
                         handleClose();
                       }}>
                       <ButtonText fontSize='$sm' fontWeight='$medium'>
-                        {t('copy')}
+                        {t('term.read')}
                       </ButtonText>
                     </Button>
                   </VStack>
                 </Box>
               </HStack>
             </VStack>
+            </ScrollView>
           </ActionsheetContent>
         </Actionsheet>
       </KeyboardAvoidingView>
@@ -111,4 +111,4 @@ const QRActionSheet = observer(() => {
   );
 });
 
-export default QRActionSheet;
+export default TermActionSheet;

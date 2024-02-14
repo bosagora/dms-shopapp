@@ -10,7 +10,13 @@ class LoyaltyStore {
   constructor() {
     makeAutoObservable(this);
   }
+  reset(){
+    this.boa = {};
+    this.kios = {};
+    this.payment = {};
 
+    this.lastUpdateTime = 1608854400;
+  }
   setBoa = (boa) => {
     this.boa = boa;
   };

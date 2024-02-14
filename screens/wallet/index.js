@@ -34,9 +34,11 @@ import { BigNumber } from '@ethersproject/bignumber/src.ts';
 import { getSecureValue, saveSecureValue } from '../../utils/secure.store';
 import '@ethersproject/shims';
 import { Wallet } from 'ethers';
+import Constants from 'expo-constants';
+import * as Device from 'expo-device';
 
 const Index = observer(({ navigation }) => {
-  const { secretStore, userStore, loyaltyStore } = useStores();
+  const { noteStore, secretStore, userStore, loyaltyStore } = useStores();
   const [showModal, setShowModal] = useState(false);
   const [client, setClient] = useState();
   const [address, setAddress] = useState('');
@@ -52,7 +54,6 @@ const Index = observer(({ navigation }) => {
   const [withdrawableAmount, setWithdrawableAmount] = useState(
     new Amount(0, 18),
   );
-  const [intervalId, setIntervalId] = useState(0);
   const [privateKey, setPrivateKey] = useState('');
   const [userLoyaltyType, setUserLoyaltyType] = useState(0);
   const [phone, setPhone] = useState('');
@@ -67,6 +68,17 @@ const Index = observer(({ navigation }) => {
       ),
     );
   }, [loyaltyStore.lastUpdateTime]);
+
+  useEffect(() => {
+    const newVersion = process.env.EXPO_PUBLIC_APP_VERSION;
+    console.log('version : ', noteStore.version, ', newVersion :', newVersion);
+    if (Device.isDevice) {
+      if (noteStore.version === '0.0.0') {
+        noteStore.setVersion(newVersion);
+      } else if (noteStore.version !== newVersion) {
+      }
+    }
+  }, []);
 
   async function fetchClient() {
     console.log('Wallet > fetchClient', 'userStore', userStore);
@@ -83,27 +95,28 @@ const Index = observer(({ navigation }) => {
     await setData(client1);
     await fetchBalances(client1);
   }
-  async function fetchBalances(c) {
-    if (intervalId > 0) clearInterval(intervalId);
+  async function fetchBalances(cc, userAddress) {
+    if (userStore.walletInterval > 0) clearInterval(userStore.walletInterval);
 
     const id = setInterval(async () => {
-      await setData(c);
+      try {
+        await setData(cc, userAddress);
+      } catch (e) {
+        console.log('setData > e:', e);
+      }
     }, 5000);
-    setIntervalId(id);
+    userStore.setWalletInterval(id);
   }
 
   async function setData(c) {
     const pkey = await getSecureValue('privateKey');
-    console.log('pkey:', pkey);
-    console.log('privateKey:', privateKey);
     if (pkey !== privateKey) {
       await c.useSigner(new Wallet(pkey));
       setPrivateKey(pkey);
     }
 
-    console.log('>> << >> userStore.shopId : ', userStore.shopId);
     const shopInfo = await c.shop.getShopInfo(userStore.shopId);
-    console.log('shopInfo :', shopInfo);
+    // console.log('shopInfo :', shopInfo);
     setAdjustmentStatus(shopInfo.withdrawStatus);
 
     const convProvidedAmount = new Amount(shopInfo.providedAmount, 18);
@@ -125,7 +138,7 @@ const Index = observer(({ navigation }) => {
     // console.log('used Amount:', convProvidedAmount.toBOAString());
     // console.log('withdraw Amount:', convWithdrawAmount.toBOAString());
     // console.log('withdrawn Amount:', convWithdrawnAmount.toBOAString());
-    console.log('withdrawable Amount:', convWithdrawableAmount.toBOAString());
+    // console.log('withdrawable Amount:', convWithdrawableAmount.toBOAString());
     // console.log('wAdjustmentStatus :', adjustmentStatus);
     // console.log(
     //   ' withdrawableAmount.value.gt(BigNumber.from(0)) :',
@@ -159,14 +172,14 @@ const Index = observer(({ navigation }) => {
           console.log('request step :', step);
         }
         if (steps.length === 3 && steps[2].key === 'done') {
-          alert('정산 금액이 정상적으로 요청되었습니다.');
+          alert(t('wallet.modal.b.alert.done'));
         }
         userStore.setLoading(false);
       } catch (e) {
         await Clipboard.setStringAsync(JSON.stringify(e));
         console.log('error : ', e);
         userStore.setLoading(false);
-        alert('정산금액 요청에 실패하였습니다.' + JSON.stringify(e.message));
+        alert(t('wallet.modal.b.alert.fail') + JSON.stringify(e.message));
       }
     } else if (adjustmentMode === 'complete') {
       try {
@@ -177,32 +190,30 @@ const Index = observer(({ navigation }) => {
           console.log('request step :', step);
         }
         if (steps.length === 3 && steps[2].key === 'done') {
-          alert('정산이 정상적으로 완료 되었습니다.');
+          alert(t('wallet.modal.a.alert.done'));
         }
         userStore.setLoading(false);
       } catch (e) {
         await Clipboard.setStringAsync(JSON.stringify(e));
         console.log('error : ', e);
         userStore.setLoading(false);
-        alert('정산 완료에 실패하였습니다.' + JSON.stringify(e.message));
+        alert(t('wallet.modal.a.alert.fail') + JSON.stringify(e.message));
       }
     }
   };
 
   const handleComplete = () => {
     console.log('handle complete');
-    setModalHeader('정산 완료');
-    setModalContent(
-      '정산 금액이 은행계좌로 입금된 것을 확인하시고 정산요청을 완료하세요.',
-    );
+    setModalHeader(t('wallet.modal.a.heading'));
+    setModalContent(t('wallet.modal.a.heading.description'));
     setAdjustmentMode('complete');
     setShowModal(true);
   };
 
   const handleRequest = () => {
     console.log('handle request');
-    setModalHeader('정산 요청');
-    setModalContent('정산 가능 금액이 등록된 은행 계좌로 출금 됩니다.');
+    setModalHeader(t('wallet.modal.b.heading'));
+    setModalContent(t('wallet.modal.b.heading.description'));
     setAdjustmentMode('request');
     setShowModal(true);
   };
@@ -239,13 +250,13 @@ const Index = observer(({ navigation }) => {
               }}>
               <Box>
                 <Heading _dark={{ color: '$textLight200' }} size='lg'>
-                  {userStore.shopName} v0.5.4 - {process.env.EXPO_PUBLIC_ENV}
+                  {userStore.shopName}
                 </Heading>
                 <Text
                   _dark={{ color: '$textLight200' }}
                   fontSize='$xs'
                   my='$1.5'>
-                  모든 KIOS 키오스크 상점의 마일리지 제공 및 정산 내역
+                  {t('wallet.heading.description')}
                 </Text>
               </Box>
 
@@ -253,25 +264,26 @@ const Index = observer(({ navigation }) => {
               <Box>
                 <HStack justifyContent='space-between'>
                   <HStack m='$30'>
-                    <Heading size='md'>마일리지 제공/사용</Heading>
+                    <Heading size='md'>{t('wallet.modal.body.a')}</Heading>
                   </HStack>
                   <Pressable
                     onPress={() => navigation.navigate('MileageHistory')}>
                     <Text fontSize='$sm' color='$violet400'>
-                      제공/사용 내역
+                      {t('wallet.link.history.redemption')}
                     </Text>
                   </Pressable>
                 </HStack>
                 <VStack m='$2'>
                   <Box p='$1'>
                     <Text _dark={{ color: '$textLight200' }} size='md' mr='$1'>
-                      제공 : {convertProperValue(providedAmount.toBOAString())}{' '}
-                      KRW
+                      {t('wallet.modal.body.b')} :{' '}
+                      {convertProperValue(providedAmount.toBOAString())} KRW
                     </Text>
                   </Box>
                   <Box p='$1'>
                     <Text _dark={{ color: '$textLight200' }} size='md' mr='$1'>
-                      사용 : {convertProperValue(usedAmount.toBOAString())} KRW
+                      {t('wallet.modal.body.c')}:{' '}
+                      {convertProperValue(usedAmount.toBOAString())} KRW
                     </Text>
                   </Box>
                 </VStack>
@@ -280,14 +292,14 @@ const Index = observer(({ navigation }) => {
               <Box>
                 <HStack justifyContent='space-between'>
                   <HStack m='$30'>
-                    <Heading size='md'>마일리지 정산</Heading>
+                    <Heading size='md'>{t('wallet.modal.body.d')}</Heading>
                   </HStack>
                   <Pressable
                     onPress={() =>
                       navigation.navigate('MileageAdjustmentHistory')
                     }>
                     <Text fontSize='$sm' color='$violet400'>
-                      정산 내역
+                      {t('wallet.link.history.settlement')}
                     </Text>
                   </Pressable>
                 </HStack>
@@ -298,7 +310,7 @@ const Index = observer(({ navigation }) => {
                         _dark={{ color: '$textLight200' }}
                         size='sm'
                         mr='$2'>
-                        진행 금액 :{' '}
+                        {t('wallet.modal.body.e')} :{' '}
                         {adjustmentStatus === ShopWithdrawStatus.OPEN
                           ? convertProperValue(withdrawAmount.toBOAString())
                           : convertProperValue(
@@ -311,7 +323,9 @@ const Index = observer(({ navigation }) => {
                           size='xs'
                           h={25}
                           onPress={() => handleComplete()}>
-                          <ButtonText size='xs'>완료</ButtonText>
+                          <ButtonText size='xs'>
+                            {t('wallet.modal.body.g')}
+                          </ButtonText>
                         </Button>
                       ) : null}
                     </HStack>
@@ -322,7 +336,7 @@ const Index = observer(({ navigation }) => {
                         _dark={{ color: '$textLight200' }}
                         size='sm'
                         mr='$2'>
-                        가능 금액 :{' '}
+                        {t('wallet.modal.body.f')} :{' '}
                         {convertProperValue(withdrawableAmount.toBOAString())}{' '}
                         KRW
                       </Text>
@@ -332,7 +346,9 @@ const Index = observer(({ navigation }) => {
                           size='xs'
                           h={25}
                           onPress={() => handleRequest()}>
-                          <ButtonText size='xs'>요청</ButtonText>
+                          <ButtonText size='xs'>
+                            {t('wallet.modal.body.e')}
+                          </ButtonText>
                         </Button>
                       ) : null}
                     </HStack>
@@ -340,7 +356,7 @@ const Index = observer(({ navigation }) => {
 
                   <Box p='$1'>
                     <Text _dark={{ color: '$textLight200' }} size='sm' mr='$2'>
-                      완료 금액 :{' '}
+                      {t('wallet.modal.body.g')} :{' '}
                       {convertProperValue(withdrawnAmount.toBOAString())} KRW
                     </Text>
                   </Box>
@@ -363,7 +379,7 @@ const Index = observer(({ navigation }) => {
                 <VStack space='lg' mb='$4'>
                   <Heading>{modalHeader}</Heading>
                   <Text size='sm'>{modalContent}</Text>
-                  <Text size='sm'>계속 진행하려면 확인을 클릭하세요.</Text>
+                  <Text size='sm'>{t('wallet.modal.body.h')} </Text>
                 </VStack>
 
                 <ButtonGroup space='md' alignSelf='center'>
@@ -375,7 +391,7 @@ const Index = observer(({ navigation }) => {
                       setShowModal(false);
                     }}>
                     <ButtonText fontSize='$sm' fontWeight='$medium'>
-                      취소
+                      {t('button.press.b')}
                     </ButtonText>
                   </Button>
                   <Button
@@ -386,7 +402,7 @@ const Index = observer(({ navigation }) => {
                       confirmModal();
                     }}>
                     <ButtonText fontSize='$sm' fontWeight='$medium'>
-                      확인
+                      {t('button.press.a')}
                     </ButtonText>
                   </Button>
                 </ButtonGroup>

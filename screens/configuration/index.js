@@ -13,8 +13,11 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { useStores } from '../../stores';
 import { PinCodeT } from 'react-native-pincode-bosagora-ys';
 import { Pressable } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import Constants from 'expo-constants';
 
 const Configuration = observer(({ navigation }) => {
+  const { t } = useTranslation();
   const { pinStore, userStore } = useStores();
   const [isEnabled, setIsEnabled] = useState(false);
 
@@ -58,15 +61,26 @@ const Configuration = observer(({ navigation }) => {
   const data = [
     {
       id: 'bd7acbea',
-      name: 'PIN 번호 변경',
+      name: t('config.menu.a'),
     },
     {
       id: '3ac68afc',
-      name: '바이오 인증 사용',
+      name: t('config.menu.b'),
     },
     {
       id: '58694a0f',
-      name: '월렛 설정',
+      name: t('config.menu.c'),
+    },
+    {
+      id: 'cb69423sg',
+      name:
+        'Version : ' +
+        Constants.expoConfig?.version +
+        '/' +
+        Constants.expoConfig?.android?.versionCode +
+        ' (' +
+        process.env.EXPO_PUBLIC_ENV +
+        ')',
     },
   ];
   return (
@@ -82,7 +96,7 @@ const Configuration = observer(({ navigation }) => {
       height='$full'
       bg='$backgroundLight0'>
       <Heading size='xl' p='$4' pb='$3'>
-        설정
+        {t('config.setting')}
       </Heading>
       <FlatList
         m='$3'
@@ -124,19 +138,19 @@ const Configuration = observer(({ navigation }) => {
                   </Text>
                 </VStack>
                 <Box>
-                  {item.id !== '3ac68afc' ? (
-                    <MaterialIcons
-                      name='arrow-forward-ios'
-                      size={20}
-                      color='white'
-                    />
-                  ) : (
+                  {item.id === '3ac68afc' ? (
                     <Switch
                       size='sm'
                       onToggle={toggleSwitch}
                       value={isEnabled}
                     />
-                  )}
+                  ) : item.id !== 'cb69423sg' ? (
+                    <MaterialIcons
+                      name='arrow-forward-ios'
+                      size={20}
+                      color='white'
+                    />
+                  ) : null}
                 </Box>
               </HStack>
             </Box>

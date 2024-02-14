@@ -20,14 +20,22 @@ import { observer } from 'mobx-react';
 import QRActionSheet from './QRActionSheet';
 import LocalNotification from './LocalNotification';
 import MileageRedeemNotification from '../wallet/MileageRedeemNotification';
+import { saveSecureValue } from '../../utils/secure.store';
 
 // export default function Kitchen({ navigation }) {
 const Kitchen = observer(({ navigation }) => {
-  const { pinStore, userStore, loyaltyStore } = useStores();
-  function initAuth() {
+  const { pinStore, userStore, loyaltyStore, secretStore } = useStores();
+  async function initAuth() {
     console.log('initAuth');
+    clearInterval(userStore.walletInterval);
+    userStore.reset();
+    pinStore.reset();
+    loyaltyStore.reset();
+    secretStore.reset();
+    await saveSecureValue('address', '');
+    await saveSecureValue('mnemonic', '');
+    await saveSecureValue('privateKey', '');
     userStore.setAuthState(AUTH_STATE.INIT);
-    console.log('userStore :', userStore);
   }
 
   function goToAuthScreen(nextScreen) {

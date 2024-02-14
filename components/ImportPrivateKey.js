@@ -1,28 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import {
   ButtonText,
-  Center,
   FormControl,
   FormControlLabel,
   FormControlLabelText,
   Heading,
-  HStack,
   Input,
   InputField,
   Modal,
   ModalBackdrop,
   ModalBody,
   ModalContent,
-  Slider,
-  SliderFilledTrack,
-  SliderThumb,
-  SliderTrack,
   VStack,
   Text,
   Button,
-  Switch,
-  Textarea,
-  TextareaInput,
   FormControlHelper,
   FormControlHelperText,
   ButtonGroup,
@@ -43,10 +34,11 @@ import { ChevronDownIcon } from 'lucide-react-native';
 import { useStores } from '../stores';
 import { observer } from 'mobx-react';
 import { truncateMiddleString, truncateString } from '../utils/convert';
-import { getLocales } from 'expo-localization';
+import { useTranslation } from 'react-i18next';
 
 const ImportPrivateKey = observer(
   ({ saveKey, fromOtherWallet, afterSelectingShop, client }) => {
+    const { t } = useTranslation();
     const [privateKey, setPrivateKey] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [shopIds, setShopIds] = useState([]);
@@ -82,16 +74,16 @@ const ImportPrivateKey = observer(
       setSelectedShopId(id);
       const info = await client.shop.getShopInfo(id);
       console.log('shop info : ', info);
-      const deviceLocales = getLocales()[0];
-      console.log('deviceLocales :', deviceLocales);
+      // const deviceLocales = getLocales()[0];
+      // console.log('deviceLocales :', deviceLocales);
       userStore.setShopId(info.shopId);
       userStore.setShopName(info.name);
-      userStore.setLang(deviceLocales.languageCode.toLowerCase());
-      userStore.setCountry(deviceLocales.regionCode.toLowerCase());
-      userStore.setLangTag(deviceLocales.languageTag);
-      userStore.setCountryPhoneCode(
-        deviceLocales.regionCode == 'KR' ? '82' : '82',
-      );
+      // userStore.setLang(deviceLocales.languageCode.toLowerCase());
+      // userStore.setCountry(deviceLocales.regionCode.toLowerCase());
+      // userStore.setLangTag(deviceLocales.languageTag);
+      // userStore.setCountryPhoneCode(
+      //   deviceLocales.regionCode == 'KR' ? '82' : '82',
+      // );
     };
 
     const onPressSelectShop = async () => {
@@ -107,14 +99,16 @@ const ImportPrivateKey = observer(
           onPress={() => {
             setShowModal(true);
           }}>
-          <ButtonText>다른 지갑 불러오기</ButtonText>
+          <ButtonText>{t('wallet.import')}</ButtonText>
         </Button>
         {fromOtherWallet === true ? (
           shopIds.length > 0 ? (
             <Box my='$5'>
               <FormControl size='md' isRequired={true}>
                 <FormControlLabel mb='$1'>
-                  <FormControlLabelText>상점 목록</FormControlLabelText>
+                  <FormControlLabelText>
+                    {t('import.shop.body.list')}
+                  </FormControlLabelText>
                 </FormControlLabel>
                 <Select
                   onValueChange={onPressShop}
@@ -154,13 +148,13 @@ const ImportPrivateKey = observer(
                   onPress={() => {
                     onPressSelectShop();
                   }}>
-                  <ButtonText>상점 선택</ButtonText>
+                  <ButtonText>{t('import.shop.body.select')}</ButtonText>
                 </Button>
               </FormControl>
             </Box>
           ) : (
-            <Text size='sm'>
-              상점을 찾을 수 없습니다. 새로운 지갑을 생성해 주세요.
+            <Text pt='$4' size='sm'>
+              {t('import.shop.body.none')}
             </Text>
           )
         ) : null}
@@ -174,18 +168,14 @@ const ImportPrivateKey = observer(
           <ModalContent maxWidth='$96'>
             <ModalBody p='$5'>
               <VStack space='xs' mb='$4'>
-                <Heading>지갑 가져오기</Heading>
-                <Text size='sm'>
-                  사용하던 기기에서 복사한 비공개 키를 아래 빈 칸에
-                  입력해주세요. 사용하시던 지갑을 이 기기에서도 그대로 사용이
-                  가능합니다.
-                </Text>
+                <Heading>{t('wallet.import')}</Heading>
+                <Text size='sm'>{t('import.body.text.a')}</Text>
               </VStack>
               <VStack py='$2' space='xl'>
                 <FormControl>
                   <FormControlHelper>
                     <FormControlHelperText>
-                      여기에 비공개 키 문자열을 붙여넣으세요.
+                      {t('import.body.text.b')}
                     </FormControlHelperText>
                   </FormControlHelper>
 
@@ -221,7 +211,7 @@ const ImportPrivateKey = observer(
                     setPrivateKey('');
                   }}>
                   <ButtonText fontSize='$sm' fontWeight='$medium'>
-                    No
+                    {t('button.press.b')}
                   </ButtonText>
                 </Button>
                 <Button
@@ -234,7 +224,7 @@ const ImportPrivateKey = observer(
                     setPrivateKey('');
                   }}>
                   <ButtonText fontSize='$sm' fontWeight='$medium'>
-                    Yes
+                    {t('button.press.a')}
                   </ButtonText>
                 </Button>
               </ButtonGroup>

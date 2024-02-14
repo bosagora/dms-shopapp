@@ -15,11 +15,12 @@ class UserStore {
   name = '';
   email = '';
   phone = '';
-  countryPhoneCode = '82';
-  country = 'KR';
-  lang = 'ko';
-  langTag = 'ko-KR';
-  currency = 'KRW';
+  countryPhoneCode = '';
+  country = '';
+  lang = '';
+  langTag = '';
+  currency = '';
+
 
   shopId = '00000';
   shopName = 'unknown';
@@ -30,9 +31,27 @@ class UserStore {
   expoPushToken = '';
 
   loading = false;
-
+  walletInterval = 0;
   constructor() {
     makeAutoObservable(this);
+  }
+  reset(){
+    this.state = '';
+    this.name = '';
+    this.email = '';
+    this.phone = '';
+    this.countryPhoneCode = '';
+    this.country = '';
+    this.lang = '';
+    this.langTag = '';
+    this.currency = '';
+    this.shopId = '00000';
+    this.shopName = 'unknown';
+    this.enableBio = false;
+    this.permissionsCount = 0;
+    this.expoPushToken = '';
+    this.loading = false;
+    this.walletInterval =0;
   }
 
   setAuthState = (state) => {
@@ -86,6 +105,9 @@ class UserStore {
 
   setShopName = (name) => {
     this.shopName = name;
+  }
+  setWalletInterval = (intv) => {
+    this.walletInterval = intv;
   }
 }
 

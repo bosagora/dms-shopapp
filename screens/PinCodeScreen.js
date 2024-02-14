@@ -7,9 +7,57 @@ import { observer } from 'mobx-react';
 import * as LocalAuthentication from 'expo-local-authentication';
 import { useNavigation } from 'expo-router';
 import * as RootNavigation from '../utils/root.navigation';
+import { useTranslation } from 'react-i18next';
 
 const PinCodeScreen = observer(() => {
+  const { t } = useTranslation();
   const { pinStore, userStore } = useStores();
+
+  const customTexts = {
+    enter: {
+      subTitle: t('pin.enter.subTitle'),
+    },
+    set: {
+      title: t('pin.set.title'),
+      subTitle: '{{pinLength}} ' + t('pin.set.subTitle'),
+      repeat: t('pin.set.repeat'),
+    },
+    locked: {
+      title: t('pin.locked.title'),
+      subTitle: `Wrong PIN {{maxAttempt}} times.\nTemporarily locked in {{lockDuration}}.`,
+    },
+  };
+
+  const EnterAndSet = {
+    header: {
+      justifyContent: 'flex-start',
+      alignItems: 'center',
+      minHeight: 100,
+    },
+    title: { fontSize: 24 },
+    pin: { backgroundColor: '#a78bfa' },
+  };
+
+  const customStyles = {
+    main: {
+      ...StyleSheet.absoluteFillObject,
+      zIndex: 99,
+      backgroundColor: '#4b5563',
+    },
+    enter: {
+      ...EnterAndSet,
+      buttonTextDisabled: { color: 'gray' },
+    },
+    set: EnterAndSet,
+    locked: {
+      countdown: { borderColor: 'black' },
+      countdownText: { color: 'black' },
+    },
+    reset: {
+      confirmText: { color: 'red' },
+    },
+  };
+
   useEffect(() => {
     console.log('PinCodeScreen > useEffect : ', pinStore);
     // 앱 초기 등록 화면이 아니고
@@ -108,50 +156,5 @@ const PinCodeScreen = observer(() => {
     />
   );
 });
-
-const customTexts = {
-  enter: {
-    subTitle: '핀 코드를 입력하세요.',
-  },
-  set: {
-    title: '핀 코드를 설정합니다.',
-    subTitle: '{{pinLength}} 자리 핀 코드를 읿력하세요.',
-    repeat: '같은 핀 코드를 다시 입력하세요.',
-  },
-  locked: {
-    title: 'Locked',
-    subTitle: `Wrong PIN {{maxAttempt}} times.\nTemporarily locked in {{lockDuration}}.`,
-  },
-};
-
-const EnterAndSet = {
-  header: {
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    minHeight: 100,
-  },
-  title: { fontSize: 24 },
-  pin: { backgroundColor: '#a78bfa' },
-};
-
-const customStyles = {
-  main: {
-    ...StyleSheet.absoluteFillObject,
-    zIndex: 99,
-    backgroundColor: '#4b5563',
-  },
-  enter: {
-    ...EnterAndSet,
-    buttonTextDisabled: { color: 'gray' },
-  },
-  set: EnterAndSet,
-  locked: {
-    countdown: { borderColor: 'black' },
-    countdownText: { color: 'black' },
-  },
-  reset: {
-    confirmText: { color: 'red' },
-  },
-};
 
 export default PinCodeScreen;

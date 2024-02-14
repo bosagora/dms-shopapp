@@ -13,8 +13,10 @@ import * as Device from 'expo-device';
 import { getClient } from '../../utils/client';
 import { AUTH_STATE } from '../../stores/user.store';
 import { MobileType } from 'dms-sdk-client';
+import { useTranslation } from 'react-i18next';
 
 const Secret = observer(({ navigation }) => {
+  const { t } = useTranslation();
   const { userStore, secretStore } = useStores();
   const [client, setClient] = useState();
   const [walletAddress, setWalletAddress] = useState('');
@@ -75,13 +77,12 @@ const Secret = observer(({ navigation }) => {
     } catch (e) {
       await Clipboard.setStringAsync(JSON.stringify(e));
       console.log('error : ', e);
-      alert('푸시 토큰 등록에 실패하였습니다.' + JSON.stringify(e.message));
+      alert(t('secret.alert.push.fail') + JSON.stringify(e.message));
     }
   }
   function resetPinCode(uri = 'ShopReg') {
     userStore.setLoading(false);
-    console.log('registerPushToken >>');
-    alert('새로운 지갑이 생성 되었습니다.');
+    alert(t('secret.alert.wallet.done'));
     navigation.navigate(uri);
   }
 
@@ -91,8 +92,7 @@ const Secret = observer(({ navigation }) => {
     try {
       wallet = new Wallet(key);
     } catch (e) {
-      console.log('Invalid private key.');
-      alert('유효하지 않은 키 입니다.');
+      alert(t('secret.alert.wallet.invalid'));
       return;
     }
     secretStore.setAddress(wallet.address);
@@ -128,13 +128,13 @@ const Secret = observer(({ navigation }) => {
         height='$full'
         bg='$backgroundLight0'>
         <MobileHeader
-          title='지갑 생성'
-          subTitle='상점 등록 및 정산을 위한 지갑'
+          title={t('secret.header.title')}
+          subTitle={t('secret.header.subtitle')}
         />
         <VStack space='lg' pt='$4' m='$7'>
           <Box>
             <Button py='$2.5' px='$3' onPress={tt}>
-              <ButtonText>지갑 생성하기</ButtonText>
+              <ButtonText>{t('wallet.create')}</ButtonText>
             </Button>
           </Box>
           <ImportPrivateKey

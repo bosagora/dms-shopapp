@@ -8,8 +8,10 @@ import { getClient } from '../../utils/client';
 import { convertProperValue, timePadding } from '../../utils/convert';
 import { Amount, BOACoin } from 'dms-sdk-client';
 import { BigNumber } from '@ethersproject/bignumber';
+import { useTranslation } from 'react-i18next';
 
 const MileageAdjustmentHistory = observer(({ navigation }) => {
+  const { t } = useTranslation();
   const { secretStore, userStore } = useStores();
   const [client, setClient] = useState();
   const [address, setAddress] = useState('');
@@ -102,11 +104,13 @@ const MileageAdjustmentHistory = observer(({ navigation }) => {
         height='$full'
         bg='$backgroundLight0'>
         <MobileHeader
-          title='마일리지 정산 내역'
+          title={t('wallet.history.settlement.header.title')}
           subTitle={
             historyData && historyData.length > 0
-              ? '최근 ' + historyData.length + '개 내역'
-              : '조회된 내역이 없습니다.'
+              ? t('wallet.history.header.subtitle.a') +
+                historyData.length +
+                t('wallet.history.header.subtitle.b')
+              : t('wallet.history.header.subtitle.nothing')
           }
         />
         {historyData && historyData.length > 0 ? (
@@ -145,7 +149,9 @@ const MileageAdjustmentHistory = observer(({ navigation }) => {
                           color: '$warmGray200',
                         },
                       }}>
-                      {item.actionName === 'OPEN_WITHDRAWN' ? '요청' : '완료'}
+                      {item.actionName === 'OPEN_WITHDRAWN'
+                        ? t('wallet.modal.body.e')
+                        : t('wallet.history.header.subtitle.g')}
                     </Text>
                     <Text
                       fontSize='$sm'

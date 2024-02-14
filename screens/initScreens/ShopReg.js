@@ -39,6 +39,8 @@ import { getLocales, getCalendars } from 'expo-localization';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { getClient } from '../../utils/client';
 import { ChevronDownIcon } from 'lucide-react-native';
+import MobileHeader from '../../components/MobileHeader';
+import { useTranslation } from 'react-i18next';
 
 const registerSchema = yup.object().shape({
   n1: yup.string().required(),
@@ -49,11 +51,9 @@ const registerInitialValues = {
 };
 
 const ShopReg = observer(({ navigation }) => {
+  const { t } = useTranslation();
   const [client, setClient] = useState(null);
   const [address, setAddress] = useState('');
-  const [phoneCode, setPhoneCode] = useState('01010002000');
-  const [shopName, setShopName] = useState('');
-  const toast = useToast();
   const { userStore } = useStores();
 
   useEffect(() => {
@@ -69,17 +69,17 @@ const ShopReg = observer(({ navigation }) => {
       console.log('isUp:', isUp);
     }
     fetchClient().then(() => console.log('end of fetchClient'));
-    const deviceLocales = getLocales()[0];
-    console.log('deviceLocales :', deviceLocales);
-    // initiateTimer();
-    // alert('regionCode :' + JSON.stringify(deviceLocales));
-    userStore.setCurrency(deviceLocales.currencyCode.toLowerCase());
-    userStore.setLang(deviceLocales.languageCode.toLowerCase());
-    userStore.setCountry(deviceLocales.regionCode.toLowerCase());
-    userStore.setLangTag(deviceLocales.languageTag);
-    userStore.setCountryPhoneCode(
-      deviceLocales.regionCode == 'KR' ? '82' : '82',
-    );
+    // const deviceLocales = getLocales()[0];
+    // console.log('deviceLocales :', deviceLocales);
+    // // initiateTimer();
+    // // alert('regionCode :' + JSON.stringify(deviceLocales));
+    // userStore.setCurrency(deviceLocales.currencyCode.toLowerCase());
+    // userStore.setLang(deviceLocales.languageCode.toLowerCase());
+    // userStore.setCountry(deviceLocales.regionCode.toLowerCase());
+    // userStore.setLangTag(deviceLocales.languageTag);
+    // userStore.setCountryPhoneCode(
+    //   deviceLocales.regionCode == 'KR' ? '82' : '82',
+    // );
   }, []);
 
   async function regShop() {
@@ -104,12 +104,13 @@ const ShopReg = observer(({ navigation }) => {
         steps.push(step);
         console.log('submit step :', step);
       }
+      alert(t('shop.alert.reg.done'));
       userStore.setLoading(false);
     } catch (e) {
       await Clipboard.setStringAsync(JSON.stringify(e));
       console.log('error : ', e);
       userStore.setLoading(false);
-      alert('상점 등록에 실패하였습니다.' + JSON.stringify(e.message));
+      alert(t('shop.alert.reg.fail'));
     }
   }
 
@@ -153,7 +154,9 @@ const ShopReg = observer(({ navigation }) => {
           keyboardShouldPersistTaps='handled'
           scrollToOverflowEnabled={true}
           enableAutomaticScroll={true}>
-          <MobileHeader />
+          <MobileHeader
+            title={t('shop.header.title')}
+            subTitle={t('shop.header.subtitle')}></MobileHeader>
 
           <Box
             p='$4'
@@ -168,12 +171,14 @@ const ShopReg = observer(({ navigation }) => {
                 isRequired={true}
                 isInvalid={!!formik.errors.n1}>
                 <FormControlLabel mb='$1'>
-                  <FormControlLabelText>상점명</FormControlLabelText>
+                  <FormControlLabelText>
+                    {t('shop.body.text.a')}
+                  </FormControlLabelText>
                 </FormControlLabel>
                 <Input>
                   <InputField
                     type='text'
-                    placeholder='상점명'
+                    placeholder={t('shop.body.text.a')}
                     onChangeText={formik.handleChange('n1')}
                     onBlur={formik.handleBlur('n1')}
                     value={formik.values?.n1}
@@ -182,7 +187,9 @@ const ShopReg = observer(({ navigation }) => {
               </FormControl>
               <FormControl size='md' isRequired={true}>
                 <FormControlLabel mb='$1'>
-                  <FormControlLabelText>통화</FormControlLabelText>
+                  <FormControlLabelText>
+                    {t('shop.body.text.b')}
+                  </FormControlLabelText>
                 </FormControlLabel>
                 <Select
                   onValueChange={onPressCurrency}
@@ -210,7 +217,7 @@ const ShopReg = observer(({ navigation }) => {
                 isDisabled={formik.values?.n1 === ''}
                 onPress={formik.handleSubmit}
                 my='$4'>
-                <ButtonText>인증</ButtonText>
+                <ButtonText>{t('shop.create')}</ButtonText>
               </Button>
             </VStack>
           </Box>
@@ -219,26 +226,5 @@ const ShopReg = observer(({ navigation }) => {
     </SafeAreaView>
   );
 });
-
-function MobileHeader() {
-  return (
-    <VStack px='$3' mt='$4.5' space='md'>
-      <VStack space='xs' ml='$1' my='$4'>
-        <Heading color='$textLight50' sx={{ _dark: { color: '$textDark50' } }}>
-          상점 등록
-        </Heading>
-        <Text
-          fontSize='$md'
-          fontWeight='normal'
-          color='$primary300'
-          sx={{
-            _dark: { color: '$textDark400' },
-          }}>
-          마일리지 및 정산을 위한 상점 등록
-        </Text>
-      </VStack>
-    </VStack>
-  );
-}
 
 export default ShopReg;

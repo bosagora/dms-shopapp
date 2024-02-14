@@ -15,6 +15,18 @@ class PinStore {
     makeAutoObservable(this);
   }
 
+  reset() {
+    this.mode = '';
+    this.code = '';
+    this.visible = false;
+    this.nextScreen = '';
+    this.needPinCode = false;
+    this.successEnter = false;
+
+    this.backgrounAt = 0;
+    this.useFooter = true;
+  }
+
   setMode = (mode) => {
     this.mode = mode;
   };
