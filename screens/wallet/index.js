@@ -277,13 +277,21 @@ const Index = observer(({ navigation }) => {
                   <Box p='$1'>
                     <Text _dark={{ color: '$textLight200' }} size='md' mr='$1'>
                       {t('wallet.modal.body.b')} :{' '}
-                      {convertProperValue(providedAmount.toBOAString())} KRW
+                      {convertProperValue(
+                        providedAmount.toBOAString(),
+                        userStore.currency,
+                      )}{' '}
+                      {userStore.currency.toUpperCase()}
                     </Text>
                   </Box>
                   <Box p='$1'>
                     <Text _dark={{ color: '$textLight200' }} size='md' mr='$1'>
                       {t('wallet.modal.body.c')}:{' '}
-                      {convertProperValue(usedAmount.toBOAString())} KRW
+                      {convertProperValue(
+                        usedAmount.toBOAString(),
+                        userStore.currency,
+                      )}{' '}
+                      {userStore.currency.toUpperCase()}
                     </Text>
                   </Box>
                 </VStack>
@@ -312,11 +320,15 @@ const Index = observer(({ navigation }) => {
                         mr='$2'>
                         {t('wallet.modal.body.e')} :{' '}
                         {adjustmentStatus === ShopWithdrawStatus.OPEN
-                          ? convertProperValue(withdrawAmount.toBOAString())
+                          ? convertProperValue(
+                              withdrawAmount.toBOAString(),
+                              userStore.currency,
+                            )
                           : convertProperValue(
                               new Amount(0, 18).toBOAString(),
+                              userStore.currency,
                             )}{' '}
-                        KRW
+                        {userStore.currency.toUpperCase()}
                       </Text>
                       {adjustmentStatus === ShopWithdrawStatus.OPEN ? (
                         <Button

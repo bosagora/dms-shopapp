@@ -54,13 +54,6 @@ const InitStack = createNativeStackNavigator();
 const MainStack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const routeNameRef = React.createRef();
-// Text 적용
-Text.defaultProps = Text.defaultProps || {};
-Text.defaultProps.allowFontScaling = false;
-
-// TextInput 적용
-TextInput.defaultProps = TextInput.defaultProps || {};
-TextInput.defaultProps.allowFontScaling = false;
 
 import ko from '../langs/ko.json';
 import en from '../langs/en.json';
@@ -72,6 +65,16 @@ import MileageAdjustmentHistory from '../screens/wallet/MileageAdjustmentHistory
 import TermActionSheet from '../screens/TermActionSheet';
 import PrivacyActionSheet from '../screens/PrivacyActionSheet';
 import { getLocales } from 'expo-localization';
+import * as Updates from 'expo-updates';
+import * as Device from 'expo-device';
+
+// Text 적용
+Text.defaultProps = Text.defaultProps || {};
+Text.defaultProps.allowFontScaling = false;
+
+// TextInput 적용
+TextInput.defaultProps = TextInput.defaultProps || {};
+TextInput.defaultProps.allowFontScaling = false;
 
 I18N.use(initReactI18next) // passes i18n down to react-i18next
   .init({
@@ -135,7 +138,21 @@ const App = observer(() => {
           });
       }
     };
+    async function onFetchUpdateAsync() {
+      try {
+        const update = await Updates.checkForUpdateAsync();
+
+        if (update.isAvailable) {
+          await Updates.fetchUpdateAsync();
+          await Updates.reloadAsync();
+        }
+      } catch (error) {
+        // You can also add an alert() to see the error message in case of an error when fetching updates.
+        alert(`Error fetching latest Expo update: ${error}`);
+      }
+    }
     rehydrate();
+    if (Device.isDevice) onFetchUpdateAsync();
   }, []);
   function afterChangeLang(it) {
     console.log('afterChangeLang:', it);

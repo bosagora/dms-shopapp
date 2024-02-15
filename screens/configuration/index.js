@@ -77,7 +77,7 @@ const Configuration = observer(({ navigation }) => {
         'Version : ' +
         Constants.expoConfig?.version +
         '/' +
-        Constants.expoConfig?.android?.versionCode +
+        process.env.EXPO_PUBLIC_BUNDLE_CODE +
         ' (' +
         process.env.EXPO_PUBLIC_ENV +
         ')',
