@@ -80,7 +80,7 @@
   "shop.header.title": "상점 등록",
   "shop.header.subtitle": "마일리지 및 정산을 위한 상점 등록",
   "shop.body.text.a": "상점명",
-  "shop.body.text.b": "통화 -> 화폐 관련",
+  "shop.body.text.b": "통화",
 
   "wallet.heading.description": "KIOS 상점의 마일리지 제공 및 정산 내역",
   "wallet.link.history.redemption": "제공/사용 내역",
@@ -104,12 +104,14 @@
 
   "wallet.history.settlement.header.title": "마일리지 정산 내역",
   "wallet.history.header.title": "마일리지 적립/사용 내역",
+  "wallet.history.header.title.p": "마일리지 제공/사용 내역",
   "wallet.history.header.subtitle.a": "최근",
   "wallet.history.header.subtitle.b": "개 내역",
   "wallet.history.header.subtitle.nothing": "조회된 내역이 없습니다.",
   "wallet.history.body.text.a": "취소",
   "wallet.history.body.text.b": "적립",
   "wallet.history.body.text.c": "사용",
+  "wallet.history.body.text.d": "제공",
 
   "wallet.redeem.use.fail": "사용 승인에 실패하였습니다. 관리자에게 문의하세요.",
   "wallet.redeem.use.done": "마일리지 사용이 성공적으로 승인되었습니다.",

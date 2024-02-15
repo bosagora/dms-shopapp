@@ -3,6 +3,7 @@ import { Link } from 'expo-router';
 import { observer } from 'mobx-react';
 import { useStores } from '../../stores';
 import React from 'react';
+import { Box } from '@gluestack-ui/themed';
 
 const About = observer(({ navigation }) => {
   const { noteStore, userStore } = useStores();
@@ -18,6 +19,9 @@ const About = observer(({ navigation }) => {
       <Pressable onPress={() => userStore.setUserName(now)}>
         <Text>Home {userStore.name}</Text>
       </Pressable>
+      <Box>
+        <Text>{JSON.stringify(userStore)}</Text>
+      </Box>
     </View>
   );
 });

@@ -157,7 +157,7 @@ const App = observer(() => {
   function afterChangeLang(it) {
     console.log('afterChangeLang:', it);
     i18n
-      .changeLanguage('en')
+      .changeLanguage(userStore.lang)
       .then()
       .catch((error) => {
         console.log(error);

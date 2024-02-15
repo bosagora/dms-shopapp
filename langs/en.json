@@ -60,7 +60,7 @@
   "pin.enter.title": "Enter 4-digit passcode",
   "pin.enter.subTitle": "Enter 4-digit passcode",
   "pin.set.title": "Set Your Passcode",
-  "pin.set.subTitle": "Re-enter your passcode",
+  "pin.set.subTitle": "enter your passcode",
   "pin.set.repeat": "Re-enter your passcode",
   "pin.locked.title": "Screen locked",
   "pin.locked.subTitle": "Wrong PIN {{maxAttempt}} times.\nTemporarily locked in {{lockDuration}}.",

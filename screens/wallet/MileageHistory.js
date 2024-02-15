@@ -112,7 +112,7 @@ const MileageHistory = observer(({ navigation }) => {
         height='$full'
         bg='$backgroundLight0'>
         <MobileHeader
-          title={t('wallet.history.header.title')}
+          title={t('wallet.history.header.title.p')}
           subTitle={
             historyData && historyData.length > 0
               ? t('wallet.history.header.subtitle.a') +
@@ -159,8 +159,8 @@ const MileageHistory = observer(({ navigation }) => {
                       }}>
                       {item.actionName === 'CANCEL'
                         ? t('wallet.history.body.text.a')
-                        : item.actionName === 'SAVED'
-                        ? t('wallet.history.body.text.b')
+                        : item.actionName === 'PROVIDED'
+                        ? t('wallet.history.body.text.d')
                         : t('wallet.history.body.text.c')}
                     </Text>
                     <Text

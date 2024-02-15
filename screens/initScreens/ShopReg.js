@@ -68,7 +68,11 @@ const ShopReg = observer(({ navigation }) => {
       const isUp = await client.ledger.isRelayUp();
       console.log('isUp:', isUp);
     }
-    fetchClient().then(() => console.log('end of fetchClient'));
+    fetchClient()
+      .then(() => console.log('end of fetchClient'))
+      .catch((error) => {
+        console.log(error);
+      });
     // const deviceLocales = getLocales()[0];
     // console.log('deviceLocales :', deviceLocales);
     // // initiateTimer();
@@ -208,7 +212,7 @@ const ShopReg = observer(({ navigation }) => {
                         <SelectDragIndicator />
                       </SelectDragIndicatorWrapper>
                       <SelectItem label='KRW' value='krw' defaultValue={true} />
-                      <SelectItem label='USD' value='usd' isDisabled={true} />
+                      <SelectItem label='USD' value='usd' isDisabled={false} />
                     </SelectContent>
                   </SelectPortal>
                 </Select>

@@ -349,8 +349,11 @@ const Index = observer(({ navigation }) => {
                         size='sm'
                         mr='$2'>
                         {t('wallet.modal.body.f')} :{' '}
-                        {convertProperValue(withdrawableAmount.toBOAString())}{' '}
-                        KRW
+                        {convertProperValue(
+                          withdrawableAmount.toBOAString(),
+                          userStore.currency,
+                        )}{' '}
+                        {userStore.currency.toUpperCase()}
                       </Text>
                       {adjustmentStatus !== ShopWithdrawStatus.OPEN &&
                       withdrawableAmount.value.gt(BigNumber.from(0)) ? (
@@ -369,7 +372,11 @@ const Index = observer(({ navigation }) => {
                   <Box p='$1'>
                     <Text _dark={{ color: '$textLight200' }} size='sm' mr='$2'>
                       {t('wallet.modal.body.g')} :{' '}
-                      {convertProperValue(withdrawnAmount.toBOAString())} KRW
+                      {convertProperValue(
+                        withdrawnAmount.toBOAString(),
+                        userStore.currency,
+                      )}{' '}
+                      {userStore.currency.toUpperCase()}
                     </Text>
                   </Box>
                 </VStack>

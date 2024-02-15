@@ -22,7 +22,7 @@ import { useTranslation } from 'react-i18next';
 const Term = observer(({ navigation }) => {
   const { t } = useTranslation();
   const { secretStore } = useStores();
-  const [values, setValues] = useState(['T1', 'T2']);
+  const [values, setValues] = useState([]);
   function agreeTerm() {
     if (values.includes('T1') && values.includes('T2')) {
       navigation.navigate('InitPinCodeScreen');
