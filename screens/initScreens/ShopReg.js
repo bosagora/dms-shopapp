@@ -213,6 +213,7 @@ const ShopReg = observer(({ navigation }) => {
                       </SelectDragIndicatorWrapper>
                       <SelectItem label='KRW' value='krw' defaultValue={true} />
                       <SelectItem label='USD' value='usd' isDisabled={false} />
+                      <SelectItem label='PHP' value='php' isDisabled={false} />
                     </SelectContent>
                   </SelectPortal>
                 </Select>

@@ -172,6 +172,7 @@ const MileageAdjustmentHistory = observer(({ navigation }) => {
                           9,
                         ).toBOAString(),
                       )}{' '}
+                      {userStore.currency.toUpperCase()}
                     </Text>
                   </Box>
                 </HStack>

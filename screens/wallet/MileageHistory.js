@@ -184,6 +184,7 @@ const MileageHistory = observer(({ navigation }) => {
                         ).toBOAString(),
                         userStore.currency,
                       )}{' '}
+                      {userStore.currency.toUpperCase()}
                     </Text>
                   </Box>
                 </HStack>
