@@ -176,7 +176,7 @@ const MileageHistory = observer(({ navigation }) => {
                   </VStack>
                   <Box>
                     <Text>
-                      {item.actionName === 'CANCEL' ? '-' : ''}
+                      {item.actionName === 'USED' ? '+' : '-'}
                       {convertProperValue(
                         new Amount(
                           BigNumber.from(item.increase),

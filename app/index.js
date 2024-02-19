@@ -67,6 +67,7 @@ import PrivacyActionSheet from '../screens/PrivacyActionSheet';
 import { getLocales } from 'expo-localization';
 import * as Updates from 'expo-updates';
 import * as Device from 'expo-device';
+import ShopNotification from '../screens/wallet/ShopNotification';
 
 // Text 적용
 Text.defaultProps = Text.defaultProps || {};
@@ -97,7 +98,11 @@ const App = observer(() => {
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
   const { i18n } = useTranslation();
 
-  const { expoPushToken } = usePushNotification(userStore, loyaltyStore);
+  const { expoPushToken } = usePushNotification(
+    userStore,
+    loyaltyStore,
+    pinStore,
+  );
   useEffect(() => {
     const rehydrate = async () => {
       await trunk.init();
@@ -344,6 +349,7 @@ function MainStackScreen() {
         name='MileageRedeemNotification'
         component={MileageRedeemNotification}
       />
+      <MainStack.Screen name='ShopNotification' component={ShopNotification} />
       <MainStack.Screen
         name='LocalNotification'
         component={LocalNotification}

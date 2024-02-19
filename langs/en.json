@@ -51,7 +51,7 @@
   "secret.header.title": "Create your wallet",
   "secret.header.subtitle": "Your wallet for loyalty collection/redemption",
 
-  "import.body.text.a": "Please enter the private key you copied from your old device in the space below to continue using your existing wallet on this device.",
+  "import.body.text.a": "Please enter the private key you copied from your old device in the space below to continue using your existing wallet on this device. \nWarning: Importing a wallet mean that your current wallet will be overwritten. If you want to recover your current wallet in the future, BE SURE TO COPY THE PRIVATE KEY OF YOUR CURRENT WALLET. ",
   "import.body.text.b": "Enter your private key here.",
   "import.shop.body.list": "List of stores/shops",
   "import.shop.body.select": "Select store/shop",
@@ -111,9 +111,9 @@
   "wallet.history.body.text.b": "Collected",
   "wallet.history.body.text.c": "Used",
 
-  "wallet.redeem.use.fail": "Redemption authentication failed. Please contact support.",
-  "wallet.redeem.use.done": "Redemption successfully authenticated.",
-  "wallet.redeem.header.title": "KIOS Loyalty redeemed",
+  "wallet.redeem.use.fail": "Authorizing loyalty redemption cancellation failed.",
+  "wallet.redeem.use.done": "Authorizing loyalty redemption cancellation successful.",
+  "wallet.redeem.header.title": "Loyalty redemption cancellation",
   "wallet.redeem.header.subtitle": "Redeem KIOS Loyalty",
   "wallet.redeem.header.body.a": "Loyalty redeemed amount",
 

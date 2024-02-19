@@ -5,21 +5,25 @@ import React, { useEffect, useState } from 'react';
 import {
   Box,
   Button,
+  ButtonIcon,
   ButtonText,
   HStack,
   Text,
   VStack,
 } from '@gluestack-ui/themed';
+import { CheckIcon } from 'lucide-react-native';
 import MobileHeader from '../../components/MobileHeader';
 import '@ethersproject/shims';
 import { Amount, NormalSteps } from 'dms-sdk-client';
 import { getClient } from '../../utils/client';
+import { getLocales } from 'expo-localization';
+import { getSecureValue } from '../../utils/secure.store';
+import { Wallet } from 'ethers';
 import { convertProperValue } from '../../utils/convert';
-import { useTranslation } from 'react-i18next';
 
-const MileageRedeemNotification = observer(({ navigation }) => {
-  const { t } = useTranslation();
-  const { pinStore, loyaltyStore } = useStores();
+const ShopNotification = observer(({ navigation }) => {
+  const { loyaltyStore } = useStores();
+  const [values, setValues] = useState(['T1', 'T2']);
 
   const [client, setClient] = useState(null);
   const [address, setAddress] = useState('');
@@ -44,6 +48,7 @@ const MileageRedeemNotification = observer(({ navigation }) => {
     fetchClient().then(() => console.log('end of fetchClient'));
 
     console.log('loyaltyStore :', loyaltyStore);
+    // initiateTimer();
   }, []);
   const saveShopInfo = async (cc, shopId) => {
     // get shop info
@@ -61,6 +66,11 @@ const MileageRedeemNotification = observer(({ navigation }) => {
     await saveShopInfo(cc, info.shopId);
   };
 
+  async function resetPrivateKey() {
+    const pkey = await getSecureValue('privateKey');
+    console.log('pkey:', pkey);
+    await client.useSigner(new Wallet(pkey));
+  }
   async function confirmCancel() {
     try {
       const steps = [];
@@ -88,13 +98,16 @@ const MileageRedeemNotification = observer(({ navigation }) => {
       if (steps.length === 3 && steps[2].key === 'approved') {
         const time = Math.round(+new Date() / 1000);
         loyaltyStore.setLastUpdateTime(time);
-        alert(t('wallet.redeem.use.done'));
-        pinStore.setNextScreen('Wallet');
+        alert('정상적으로 취소 승인이 되었습니다.');
         navigation.navigate('Wallet');
       }
     } catch (e) {
       console.log('e :', e);
-      alert(t('wallet.redeem.use.fail') + 'e:' + e.message);
+      alert(
+        '취소 승인에 실패하였습니다. 관리자에게 문의하세요.' +
+          'e:' +
+          JSON.stringify(e.message),
+      );
     }
   }
 
@@ -112,23 +125,21 @@ const MileageRedeemNotification = observer(({ navigation }) => {
         height='$full'
         bg='$backgroundLight0'>
         <MobileHeader
-          title={t('wallet.redeem.header.title')}
-          subTitle={t('wallet.redeem.header.subtitle')}
+          title='마일리지 사용 알림'
+          subTitle='마일리지로 상품 구매'
         />
 
         <VStack space='lg' pt='$4' m='$7'>
           <HStack>
-            <Text w='40%'>{t('shop')} :</Text>
+            <Text w='40%'>구매 상점 :</Text>
             <Text>{shopName}</Text>
           </HStack>
           <HStack>
-            <Text w='40%'>{t('purchase')} ID :</Text>
+            <Text w='40%'>구매 ID :</Text>
             <Text>{purchaseId}</Text>
           </HStack>
           <HStack>
-            <Text w='40%'>
-              {t('purchase')} {t('amount')} :{' '}
-            </Text>
+            <Text w='40%'>취소 금액 :</Text>
             <Text>
               {convertProperValue(amount.toBOAString())}{' '}
               {currency.toUpperCase()}
@@ -136,7 +147,7 @@ const MileageRedeemNotification = observer(({ navigation }) => {
           </HStack>
           <Box py='$10'>
             <Button py='$2.5' px='$3' onPress={() => confirmCancel()}>
-              <ButtonText>{t('button.press.a')}</ButtonText>
+              <ButtonText>확인</ButtonText>
             </Button>
           </Box>
         </VStack>
@@ -145,4 +156,4 @@ const MileageRedeemNotification = observer(({ navigation }) => {
   );
 });
 
-export default MileageRedeemNotification;
+export default ShopNotification;
