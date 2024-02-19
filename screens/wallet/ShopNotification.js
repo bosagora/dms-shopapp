@@ -5,32 +5,27 @@ import React, { useEffect, useState } from 'react';
 import {
   Box,
   Button,
-  ButtonIcon,
   ButtonText,
   HStack,
   Text,
   VStack,
 } from '@gluestack-ui/themed';
-import { CheckIcon } from 'lucide-react-native';
 import MobileHeader from '../../components/MobileHeader';
 import '@ethersproject/shims';
 import { Amount, NormalSteps } from 'dms-sdk-client';
 import { getClient } from '../../utils/client';
-import { getLocales } from 'expo-localization';
-import { getSecureValue } from '../../utils/secure.store';
-import { Wallet } from 'ethers';
-import { convertProperValue } from '../../utils/convert';
+import { useTranslation } from 'react-i18next';
 
 const ShopNotification = observer(({ navigation }) => {
-  const { loyaltyStore } = useStores();
-  const [values, setValues] = useState(['T1', 'T2']);
+  const { t } = useTranslation();
+  const { loyaltyStore, userStore, pinStore } = useStores();
 
   const [client, setClient] = useState(null);
   const [address, setAddress] = useState('');
 
   const [shopName, setShopName] = useState('');
-  const [purchaseId, setPurchaseId] = useState('');
-  const [amount, setAmount] = useState(new Amount(0, 18));
+  const [shopId, setShopId] = useState('');
+  const [taskId, setTaskId] = useState('');
   const [currency, setCurrency] = useState('');
 
   useEffect(() => {
@@ -43,45 +38,36 @@ const ShopNotification = observer(({ navigation }) => {
       console.log('web3Status :', web3Status);
       const isUp = await client1.ledger.isRelayUp();
       console.log('isUp:', isUp);
-      await savePaymnentInfo(client1, loyaltyStore.payment.id);
+      setTaskId(loyaltyStore.payment.taskId);
+      await saveTaskInfo(client1, loyaltyStore.payment.taskId);
     }
     fetchClient().then(() => console.log('end of fetchClient'));
 
     console.log('loyaltyStore :', loyaltyStore);
     // initiateTimer();
   }, []);
-  const saveShopInfo = async (cc, shopId) => {
-    // get shop info
-    const info = await cc.shop.getShopInfo(shopId);
-    console.log('shop info : ', info);
-    setShopName(info.name);
+
+  const saveTaskInfo = async (cc, tId) => {
+    const task = await cc.shop.getTaskDetail(tId);
+    // alert('task data :' + JSON.stringify(task));
+    console.log('task info:', task);
+
+    setShopId(task.shopId.toString());
+    setShopName(task.name);
+    setCurrency(task.currency);
   };
 
-  const savePaymnentInfo = async (cc, paymentId) => {
-    const info = await cc.ledger.getPaymentDetail(paymentId);
-    console.log('payment info:', info);
-    setPurchaseId(info.purchaseId);
-    setAmount(new Amount(info.amount, 18));
-    setCurrency(info.currency);
-    await saveShopInfo(cc, info.shopId);
-  };
-
-  async function resetPrivateKey() {
-    const pkey = await getSecureValue('privateKey');
-    console.log('pkey:', pkey);
-    await client.useSigner(new Wallet(pkey));
-  }
-  async function confirmCancel() {
+  async function confirmUpdate() {
     try {
       const steps = [];
       const isUp = await client.ledger.isRelayUp();
-      for await (const step of client.ledger.approveCancelPayment(
-        loyaltyStore.payment.id,
-        purchaseId,
+      for await (const step of client.shop.approveUpdate(
+        taskId,
+        shopId,
         true,
       )) {
         steps.push(step);
-        console.log('confirmCancel step :', step);
+        console.log('confirmUpdate step :', step);
         switch (step.key) {
           case NormalSteps.PREPARED:
             break;
@@ -98,16 +84,15 @@ const ShopNotification = observer(({ navigation }) => {
       if (steps.length === 3 && steps[2].key === 'approved') {
         const time = Math.round(+new Date() / 1000);
         loyaltyStore.setLastUpdateTime(time);
-        alert('정상적으로 취소 승인이 되었습니다.');
+        userStore.setCurrency(currency.toUpperCase());
+        userStore.setShopName(shopName);
+        alert(t('wallet.shop.update.done'));
+        pinStore.setNextScreen('Wallet');
         navigation.navigate('Wallet');
       }
     } catch (e) {
       console.log('e :', e);
-      alert(
-        '취소 승인에 실패하였습니다. 관리자에게 문의하세요.' +
-          'e:' +
-          JSON.stringify(e.message),
-      );
+      alert(t('wallet.shop.update.done') + 'e:' + JSON.stringify(e.message));
     }
   }
 
@@ -125,29 +110,22 @@ const ShopNotification = observer(({ navigation }) => {
         height='$full'
         bg='$backgroundLight0'>
         <MobileHeader
-          title='마일리지 사용 알림'
-          subTitle='마일리지로 상품 구매'
+          title={t('wallet.shop.update.header.title')}
+          subTitle={t('wallet.shop.update.header.subtitle')}
         />
 
         <VStack space='lg' pt='$4' m='$7'>
           <HStack>
-            <Text w='40%'>구매 상점 :</Text>
+            <Text w='40%'>{t('shop')} :</Text>
             <Text>{shopName}</Text>
           </HStack>
           <HStack>
-            <Text w='40%'>구매 ID :</Text>
-            <Text>{purchaseId}</Text>
-          </HStack>
-          <HStack>
-            <Text w='40%'>취소 금액 :</Text>
-            <Text>
-              {convertProperValue(amount.toBOAString())}{' '}
-              {currency.toUpperCase()}
-            </Text>
+            <Text w='40%'>{t('shop.body.text.b')} :</Text>
+            <Text>{currency.toUpperCase()}</Text>
           </HStack>
           <Box py='$10'>
-            <Button py='$2.5' px='$3' onPress={() => confirmCancel()}>
-              <ButtonText>확인</ButtonText>
+            <Button py='$2.5' px='$3' onPress={() => confirmUpdate()}>
+              <ButtonText>{t('button.press.a')}</ButtonText>
             </Button>
           </Box>
         </VStack>

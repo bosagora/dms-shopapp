@@ -79,8 +79,11 @@ export const usePushNotification = (userStore, loyaltyStore, pinStore) => {
           taskId: data.taskId,
         };
 
-        loyaltyStore.setPayment(payment);
-        RootNavigation.navigate('MileageRedeemNotification');
+        alert(
+          'notification data :' +
+            JSON.stringify(response.notification.request.content),
+        );
+        // loyaltyStore.setPayment(payment);
         if (data.type === 'cancel') {
           pinStore.setNextScreen('MileageRedeemNotification');
           loyaltyStore.setPayment(payment);

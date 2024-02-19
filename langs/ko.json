@@ -119,6 +119,11 @@
   "wallet.redeem.header.subtitle": "",
   "wallet.redeem.header.body.a": "사용 마일리지",
 
+  "wallet.shop.update.fail": "상점 정보 변경 승인에 실패하였습니다.",
+  "wallet.shop.update.done": "상점 정보 변경이 정상적으로 승인이 되었습니다.",
+  "wallet.shop.update.header.title": "상점 정보 변경",
+  "wallet.shop.update.header.subtitle": "상점 이름 및 통화를 변경합니다.",
+
   "config.setting": "설정",
   "config.menu.a": "PIN 번호 변경",
   "config.menu.b": "바이오 인증 사용",

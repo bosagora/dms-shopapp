@@ -117,6 +117,11 @@
   "wallet.redeem.header.subtitle": "Redeem KIOS Loyalty",
   "wallet.redeem.header.body.a": "Loyalty redeemed amount",
 
+  "wallet.shop.update.fail": "Approving store/shop information change failed.",
+  "wallet.shop.update.done": "Store/shop information change approved successfully.",
+  "wallet.shop.update.header.title": "Store/shop information change",
+  "wallet.shop.update.header.subtitle": "Change your store/shop name and currency.",
+
   "config.setting": "Settings",
   "config.menu.a": "Change your passcode",
   "config.menu.b": "Use Biometric authentication",

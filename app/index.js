@@ -209,7 +209,10 @@ const App = observer(() => {
           const diff = time - pinStore.backgrounAt;
 
           if (userStore.state === 'DONE' && diff > 10) {
-            if (pinStore.nextScreen !== 'MileageRedeemNotification')
+            if (
+              pinStore.nextScreen !== 'MileageRedeemNotification' &&
+              pinStore.nextScreen !== 'ShopNotification'
+            )
               pinStore.setNextScreen('Wallet');
             pinStore.setSuccessEnter(false);
             pinStore.setVisible(true);
