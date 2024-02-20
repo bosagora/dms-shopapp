@@ -113,6 +113,14 @@ const MileageHistory = observer(({ navigation }) => {
         });
 
       const history = scheduledHistory.concat(tradeHistory);
+      history.sort(function (a, b) {
+        // 오름차순
+        return a.blockTimestamp > b.blockTimestamp
+          ? -1
+          : a.blockTimestamp < b.blockTimestamp
+          ? 1
+          : 0;
+      });
       console.log('history :', history.slice(0, 3));
 
       setHistoryData(history);
