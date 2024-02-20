@@ -188,7 +188,7 @@ const MileageHistory = observer(({ navigation }) => {
                         },
                       }}>
                       {item.actionName === 'SCHEDULED'
-                        ? '제공 예정'
+                        ? t('wallet.history.body.text.e')
                         : item.actionName === 'CANCEL'
                         ? t('wallet.history.body.text.a')
                         : item.actionName === 'PROVIDED'

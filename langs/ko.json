@@ -112,6 +112,7 @@
   "wallet.history.body.text.b": "적립",
   "wallet.history.body.text.c": "사용",
   "wallet.history.body.text.d": "제공",
+  "wallet.history.body.text.e": "제공 예정",
 
   "wallet.redeem.use.fail": "마일리지 사용 취소 승인에 실패하였습니다.",
   "wallet.redeem.use.done": "마일리지 사용 취소가 성공적으로 승인되었습니다.",

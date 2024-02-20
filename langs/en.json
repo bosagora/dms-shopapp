@@ -110,6 +110,8 @@
   "wallet.history.body.text.a": "Canceled",
   "wallet.history.body.text.b": "Collected",
   "wallet.history.body.text.c": "Used",
+  "wallet.history.body.text.d": "Provided",
+  "wallet.history.body.text.e": "Scheduled to provide",
 
   "wallet.redeem.use.fail": "Authorizing loyalty redemption cancellation failed.",
   "wallet.redeem.use.done": "Authorizing loyalty redemption cancellation successful.",

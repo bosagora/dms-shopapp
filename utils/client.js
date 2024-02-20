@@ -126,7 +126,7 @@ export async function getClient() {
       relayEndpoint: relayEndPoint.working,
       graphqlNodes: graphqlEndPoint.working,
       ledgerAddress: LIVE_CONTRACTS[sdkLink].LedgerAddress,
-      tokenAddress: LIVE_CONTRACTS[sdkLink].TokenAddress,
+      tokenAddress: LIVE_CONTRACTS[sdkLink].LoyaltyTokenAddress,
       phoneLinkAddress: LIVE_CONTRACTS[sdkLink].PhoneLinkCollectionAddress,
       validatorAddress: LIVE_CONTRACTS[sdkLink].ValidatorAddress,
       currencyRateAddress: LIVE_CONTRACTS[sdkLink].CurrencyRateAddress,
