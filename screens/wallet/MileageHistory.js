@@ -60,6 +60,25 @@ const MileageHistory = observer(({ navigation }) => {
       setClient(client1);
       setAddress(userAddress);
 
+      const resEst = await client1.shop.getEstimatedProvideHistory(
+        userStore.shopId,
+      );
+      console.log('resEst:', resEst);
+      const scheduledHistory = resEst.map((it) => {
+        return {
+          id: it.timestamp + it.purchaseId,
+          action: it.action,
+          increase: it.providedAmount.substring(
+            0,
+            it.providedAmount.length - 9,
+          ),
+          currency: it.currency,
+          actionName: 'SCHEDULED',
+          amount: it.providedAmount,
+          blockTimestamp: it.timestamp,
+        };
+      });
+      console.log('scheduledHistory:', scheduledHistory);
       const res = await client1.shop.getProvideAndUseTradeHistory(
         userStore.shopId,
         {
@@ -70,9 +89,9 @@ const MileageHistory = observer(({ navigation }) => {
         },
       );
 
-      // console.log('len :', res);
       console.log('len :', res.shopTradeHistories?.length);
-      const history = res.shopTradeHistories
+      console.log('res.shopTradeHistories 1:', res.shopTradeHistories[0]);
+      const tradeHistory = res.shopTradeHistories
         .filter((it) => {
           return it.action === 1 || it.action === 2;
         })
@@ -81,6 +100,7 @@ const MileageHistory = observer(({ navigation }) => {
             id: it.id,
             action: it.action,
             increase: it.increase,
+            currency: it.currency,
             actionName:
               it.action === 1
                 ? 'PROVIDED'
@@ -91,6 +111,8 @@ const MileageHistory = observer(({ navigation }) => {
             blockTimestamp: it.blockTimestamp,
           };
         });
+
+      const history = scheduledHistory.concat(tradeHistory);
       console.log('history :', history.slice(0, 3));
 
       setHistoryData(history);
@@ -157,7 +179,9 @@ const MileageHistory = observer(({ navigation }) => {
                           color: '$warmGray200',
                         },
                       }}>
-                      {item.actionName === 'CANCEL'
+                      {item.actionName === 'SCHEDULED'
+                        ? '제공 예정'
+                        : item.actionName === 'CANCEL'
                         ? t('wallet.history.body.text.a')
                         : item.actionName === 'PROVIDED'
                         ? t('wallet.history.body.text.d')
@@ -182,9 +206,9 @@ const MileageHistory = observer(({ navigation }) => {
                           BigNumber.from(item.increase),
                           9,
                         ).toBOAString(),
-                        userStore.currency,
+                        item.currency,
                       )}{' '}
-                      {userStore.currency.toUpperCase()}
+                      {item.currency.toUpperCase()}
                     </Text>
                   </Box>
                 </HStack>

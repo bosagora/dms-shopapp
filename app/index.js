@@ -176,7 +176,7 @@ const App = observer(() => {
       console.log('userStore.state  :', userStore);
       if (userStore.state === 'DONE' && init === false) {
         init = true;
-        pinStore.setNextScreen('Wallet');
+        // pinStore.setNextScreen('Wallet');
         pinStore.setSuccessEnter(false);
         pinStore.setVisible(true);
         pinStore.setUseFooter(false);
@@ -203,6 +203,7 @@ const App = observer(() => {
             'App has come to the foreground! > backgroundAt :',
             pinStore.backgrounAt,
           );
+          pinStore.setBackground(false);
           const time = Math.round(+new Date() / 1000);
           console.log('now :', time);
 
@@ -212,8 +213,10 @@ const App = observer(() => {
             if (
               pinStore.nextScreen !== 'MileageRedeemNotification' &&
               pinStore.nextScreen !== 'ShopNotification'
-            )
+            ) {
+              // alert('go wallet');
               pinStore.setNextScreen('Wallet');
+            }
             pinStore.setSuccessEnter(false);
             pinStore.setVisible(true);
             pinStore.setUseFooter(false);
@@ -229,7 +232,7 @@ const App = observer(() => {
           const time = Math.round(+new Date() / 1000);
           pinStore.setBackgroundAt(time);
         }
-
+        pinStore.setBackground(true);
         appState.current = nextAppState;
         setAppStateVisible(appState.current);
         console.log('After AppState', appState.current);

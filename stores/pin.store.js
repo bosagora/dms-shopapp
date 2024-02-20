@@ -22,7 +22,7 @@ class PinStore {
     this.nextScreen = '';
     this.needPinCode = false;
     this.successEnter = false;
-
+    this.background = false;
     this.backgrounAt = 0;
     this.useFooter = true;
   }
@@ -51,6 +51,10 @@ class PinStore {
 
   setBackgroundAt = (time) => {
     this.backgrounAt = time;
+  };
+
+  setBackground = (bg) => {
+    this.background = bg;
   };
 
   setUseFooter = (use) => {

@@ -87,6 +87,7 @@ const ShopNotification = observer(({ navigation }) => {
         userStore.setCurrency(currency.toUpperCase());
         userStore.setShopName(shopName);
         alert(t('wallet.shop.update.done'));
+        loyaltyStore.setPayment(null);
         pinStore.setNextScreen('Wallet');
         navigation.navigate('Wallet');
       }

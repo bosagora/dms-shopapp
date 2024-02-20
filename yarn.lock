@@ -4828,10 +4828,10 @@ dms-osx-lib@^2.7.1:
   dependencies:
     ethers "npm:boa-ethers2@^5.7.9"
 
-dms-sdk-client@^2.7.3:
-  version "2.7.3"
-  resolved "https://registry.yarnpkg.com/dms-sdk-client/-/dms-sdk-client-2.7.3.tgz#a9fbc467e8bb791b4ab9b945893e5082d2b089f1"
-  integrity sha512-jcLORM+4E5c0/Aj5q9yv1T9rb6+O3a1VxkMRxluUTOxIL7OJCweV12qvYRb/jC8aZDXN6Ny0C097Ur8jAL7zXQ==
+dms-sdk-client@^2.7.5:
+  version "2.7.5"
+  resolved "https://registry.yarnpkg.com/dms-sdk-client/-/dms-sdk-client-2.7.5.tgz#a9d26f433cb0848c9d1c036d00b861e4876995c4"
+  integrity sha512-mL9qgOn7pTL/SHVyrvInzobQPJPl8l34MS9MSt71zDKXQTXarrUkpO+KNjlBzwrjNF3Vmw7DDqPEfA9HFtIgpg==
   dependencies:
     "@ethersproject/abi" "^5.7.0"
     "@ethersproject/abstract-signer" "^5.7.0"

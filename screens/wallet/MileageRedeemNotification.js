@@ -89,6 +89,7 @@ const MileageRedeemNotification = observer(({ navigation }) => {
         const time = Math.round(+new Date() / 1000);
         loyaltyStore.setLastUpdateTime(time);
         alert(t('wallet.redeem.use.done'));
+        loyaltyStore.setPayment(null);
         pinStore.setNextScreen('Wallet');
         navigation.navigate('Wallet');
       }

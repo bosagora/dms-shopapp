@@ -151,7 +151,7 @@ const MileageAdjustmentHistory = observer(({ navigation }) => {
                       }}>
                       {item.actionName === 'OPEN_WITHDRAWN'
                         ? t('wallet.modal.body.e')
-                        : t('wallet.history.header.subtitle.g')}
+                        : t('wallet.modal.body.g')}
                     </Text>
                     <Text
                       fontSize='$sm'
