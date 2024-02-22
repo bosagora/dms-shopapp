@@ -343,19 +343,33 @@ function MainStackScreen() {
         component={Temp}
         options={{ headerShown: false }}
       />
-      <MainStack.Screen name='WalletManager' component={WalletManager} />
+      <MainStack.Screen
+        name='WalletManager'
+        component={WalletManager}
+        options={{ title: '' }}
+      />
       <MainStack.Screen name='QRActionSheet' component={QRActionSheet} />
-      <MainStack.Screen name='MileageHistory' component={MileageHistory} />
+      <MainStack.Screen
+        name='MileageHistory'
+        component={MileageHistory}
+        options={{ title: '' }}
+      />
       <MainStack.Screen
         name='MileageAdjustmentHistory'
         component={MileageAdjustmentHistory}
+        options={{ title: '' }}
       />
 
       <MainStack.Screen
         name='MileageRedeemNotification'
         component={MileageRedeemNotification}
+        options={{ title: '' }}
       />
-      <MainStack.Screen name='ShopNotification' component={ShopNotification} />
+      <MainStack.Screen
+        name='ShopNotification'
+        component={ShopNotification}
+        options={{ title: '' }}
+      />
       <MainStack.Screen
         name='LocalNotification'
         component={LocalNotification}
