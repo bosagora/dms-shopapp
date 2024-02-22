@@ -104,6 +104,7 @@
 
   "wallet.history.settlement.header.title": "Loyalty settlement history",
   "wallet.history.header.title": "Loyalty collection/redemption history",
+  "wallet.history.header.title.p": "Loyalty provide/redemption history",
   "wallet.history.header.subtitle.a": "Recent",
   "wallet.history.header.subtitle.b": "entries",
   "wallet.history.header.subtitle.nothing": "No history available.",
