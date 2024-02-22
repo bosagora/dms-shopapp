@@ -158,7 +158,7 @@ const App = observer(() => {
     }
     rehydrate();
     if (Device.isDevice) onFetchUpdateAsync();
-  }, []);
+  }, [userStore.currency]);
   function afterChangeLang(it) {
     console.log('afterChangeLang:', it);
     i18n
@@ -472,20 +472,20 @@ const TabScreens = observer(() => {
           ),
         }}
       />
-      <Tab.Screen
-        name='Kitchen'
-        component={Kitchen}
-        options={{
-          title: '홈',
-          tabBarIcon: ({ color, size, focused }) => (
-            <MaterialIcons
-              name='kitchen'
-              size={focused ? 34 : 24}
-              color={focused ? '#4ade80' : 'white'}
-            />
-          ),
-        }}
-      />
+      {/*<Tab.Screen*/}
+      {/*  name='Kitchen'*/}
+      {/*  component={Kitchen}*/}
+      {/*  options={{*/}
+      {/*    title: '홈',*/}
+      {/*    tabBarIcon: ({ color, size, focused }) => (*/}
+      {/*      <MaterialIcons*/}
+      {/*        name='kitchen'*/}
+      {/*        size={focused ? 34 : 24}*/}
+      {/*        color={focused ? '#4ade80' : 'white'}*/}
+      {/*      />*/}
+      {/*    ),*/}
+      {/*  }}*/}
+      {/*/>*/}
     </Tab.Navigator>
   );
 });

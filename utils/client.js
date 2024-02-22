@@ -134,6 +134,8 @@ export async function getClient() {
       loyaltyProviderAddress: LIVE_CONTRACTS[sdkLink].LoyaltyProviderAddress,
       loyaltyConsumerAddress: LIVE_CONTRACTS[sdkLink].LoyaltyConsumerAddress,
       loyaltyExchangerAddress: LIVE_CONTRACTS[sdkLink].LoyaltyExchangerAddress,
+      loyaltyTransferAddress: LIVE_CONTRACTS[sdkLink].LoyaltyTransferAddress,
+      loyaltyBridgeAddress: LIVE_CONTRACTS[sdkLink].LoyaltyBridgeAddress,
     });
     return new Client(ctx);
   }

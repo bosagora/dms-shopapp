@@ -45,11 +45,12 @@ const { Wallet } = ethers;
 
 const WalletManager = observer(({ navigation }) => {
   const { t } = useTranslation();
-  const { userStore, secretStore, loyaltyStore } = useStores();
+  const { userStore, secretStore, loyaltyStore, pinStore } = useStores();
   const [privateKey, setPrivateKey] = useState(
     '0000000000000000000000000000000000000000000000000000000000000001',
   );
   const [showModal, setShowModal] = useState(false);
+  const [showInitWalletModal, setShowInitWalletModal] = useState(false);
   const [client, setClient] = useState();
   const [address, setAddress] = useState('');
 
@@ -131,6 +132,23 @@ const WalletManager = observer(({ navigation }) => {
       navigation.navigate('Wallet');
     }
   }
+
+  async function warnInitializeWallet() {
+    setShowInitWalletModal(true);
+  }
+  async function initAuth() {
+    console.log('initAuth');
+    clearInterval(userStore.walletInterval);
+    userStore.reset();
+    pinStore.reset();
+    loyaltyStore.reset();
+    secretStore.reset();
+    await saveSecureValue('address', '');
+    await saveSecureValue('mnemonic', '');
+    await saveSecureValue('privateKey', '');
+    userStore.setAuthState(AUTH_STATE.INIT);
+  }
+
   return (
     <SafeAreaView>
       <Box
@@ -160,6 +178,11 @@ const WalletManager = observer(({ navigation }) => {
             afterSelectingShop={afterSelectingShop}
             client={client}
           />
+          <Box>
+            <Button py='$2.5' px='$3' onPress={() => warnInitializeWallet()}>
+              <ButtonText>{t('wallet.init')}</ButtonText>
+            </Button>
+          </Box>
         </VStack>
         <Box>
           <KeyboardAwareScrollView
@@ -254,6 +277,58 @@ const WalletManager = observer(({ navigation }) => {
                         }}>
                         <ButtonText fontSize='$sm' fontWeight='$medium'>
                           {t('config.wallet.modal.body.text.f')}
+                        </ButtonText>
+                      </Button>
+                    </ButtonGroup>
+                  </ModalBody>
+                </ModalContent>
+              </Modal>
+
+              <Modal
+                isOpen={showInitWalletModal}
+                onClose={() => {
+                  setShowInitWalletModal(false);
+                }}>
+                <ModalBackdrop />
+                <ModalContent maxWidth='$96'>
+                  <ModalHeader>
+                    <Heading size='lg'>{t('wallet.init')}</Heading>
+                    <ModalCloseButton>
+                      <Icon as={CloseIcon} />
+                    </ModalCloseButton>
+                  </ModalHeader>
+                  <ModalBody p='$5'>
+                    <VStack space='xs' mb='$4'>
+                      <Text size='sm'>
+                        {t('config.wallet.modal.body.text.g')}
+                      </Text>
+                      <Text size='sm'>
+                        {t('config.wallet.modal.body.text.h')}
+                      </Text>
+                    </VStack>
+
+                    <ButtonGroup space='md' alignSelf='center'>
+                      <Button
+                        variant='solid'
+                        bg='$success700'
+                        borderColor='$success700'
+                        onPress={async () => {
+                          setShowInitWalletModal(false);
+                        }}>
+                        <ButtonText fontSize='$sm' fontWeight='$medium'>
+                          {t('button.press.b')}
+                        </ButtonText>
+                      </Button>
+                      <Button
+                        variant='solid'
+                        bg='$success700'
+                        borderColor='$success700'
+                        onPress={async () => {
+                          setShowInitWalletModal(false);
+                          await initAuth();
+                        }}>
+                        <ButtonText fontSize='$sm' fontWeight='$medium'>
+                          {t('button.press.a')}
                         </ButtonText>
                       </Button>
                     </ButtonGroup>

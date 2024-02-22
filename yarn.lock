@@ -4754,10 +4754,10 @@ define-properties@^1.1.3, define-properties@^1.1.4:
     has-property-descriptors "^1.0.0"
     object-keys "^1.1.1"
 
-del-osx-lib@^2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/del-osx-lib/-/del-osx-lib-2.1.0.tgz#ce55230a4ac54ec617a0d4f733c86173bd7dfda2"
-  integrity sha512-IDp62tx2k7dN6ywhgZxvC493O/8k8Lk+2hWmtei8nNs5n7kscAsgAGntR584Pd50xCTyZ+mmGCOR2PD1Ar/51Q==
+del-osx-lib@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/del-osx-lib/-/del-osx-lib-2.2.0.tgz#d76e1ac54da1c5a8c7b38d3b015ec0e32a856422"
+  integrity sha512-KQOaVWvY1dU8OqWhe5RuR+2TrouFKWb9An2g4iKorVVWBaC8zTgT6qBlYV3Gkr3qHZwMCnRhbFLeiHjAoIBLLw==
   dependencies:
     ethers "npm:boa-ethers2@^5.7.9"
 
@@ -4821,17 +4821,17 @@ dir-glob@^3.0.1:
   dependencies:
     path-type "^4.0.0"
 
-dms-osx-lib@^2.7.1:
-  version "2.7.1"
-  resolved "https://registry.yarnpkg.com/dms-osx-lib/-/dms-osx-lib-2.7.1.tgz#ede2e60d26bec2564c11005111a194579f40ee98"
-  integrity sha512-QKa1+r76QBhUd2Qe37SWBFPakCh8rA6lWGLt82YCc7JWy8NEddcR326pg3Wadb6O4ZGF71D9FBNI//1MEBO7dg==
+dms-osx-lib@^2.7.5:
+  version "2.7.5"
+  resolved "https://registry.yarnpkg.com/dms-osx-lib/-/dms-osx-lib-2.7.5.tgz#78a42f702aacc31dba784af166346f9e58da94a5"
+  integrity sha512-933/2JVrAk5jTmiVGkAPZ3Do3fmR8mJb/bZgVsSP4KGQwnb7PHRAjeaUEoNBQf/ESe0D85ZAIP6TXMerr4IvrQ==
   dependencies:
     ethers "npm:boa-ethers2@^5.7.9"
 
-dms-sdk-client@^2.7.5:
-  version "2.7.5"
-  resolved "https://registry.yarnpkg.com/dms-sdk-client/-/dms-sdk-client-2.7.5.tgz#a9d26f433cb0848c9d1c036d00b861e4876995c4"
-  integrity sha512-mL9qgOn7pTL/SHVyrvInzobQPJPl8l34MS9MSt71zDKXQTXarrUkpO+KNjlBzwrjNF3Vmw7DDqPEfA9HFtIgpg==
+dms-sdk-client@^2.8.1:
+  version "2.8.1"
+  resolved "https://registry.yarnpkg.com/dms-sdk-client/-/dms-sdk-client-2.8.1.tgz#bf83efed00a7c36c0286f4ccca27db3a06346ec0"
+  integrity sha512-Tqf+yMrETg1jK55Do49CQizgkVIDVuFdwAj2Uk3HtIziQuhBWHYq/Fn0BZhz5QPK52kJipEGScnFwLxMtdJWdg==
   dependencies:
     "@ethersproject/abi" "^5.7.0"
     "@ethersproject/abstract-signer" "^5.7.0"
@@ -4845,8 +4845,8 @@ dms-sdk-client@^2.7.5:
     "@ethersproject/providers" "^5.7.0"
     "@ethersproject/random" "^5.7.0"
     "@ethersproject/wallet" "^5.7.0"
-    del-osx-lib "^2.1.0"
-    dms-osx-lib "^2.7.1"
+    del-osx-lib "^2.2.0"
+    dms-osx-lib "^2.7.5"
     dms-sdk-common "^1.0.3"
     graphql "^16.5.0"
     graphql-request "^4.3.0"

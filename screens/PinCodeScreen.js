@@ -108,8 +108,9 @@ const PinCodeScreen = observer(() => {
       pinStore.setMode(PinCodeT.Modes.Set);
       pinStore.setNextScreen('none');
     } else {
-      // alert('pinStore.nextScreen : ' + pinStore.nextScreen);
-      RootNavigation.navigate(pinStore.nextScreen);
+      const nextScreen = pinStore.nextScreen;
+      pinStore.setNextScreen('none');
+      if (nextScreen !== 'none') RootNavigation.navigate(nextScreen);
       pinStore.setSuccessEnter(true);
       pinStore.setVisible(false);
     }
