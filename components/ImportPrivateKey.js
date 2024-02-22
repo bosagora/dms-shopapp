@@ -74,12 +74,13 @@ const ImportPrivateKey = observer(
       setSelectedShopId(id);
       const info = await client.shop.getShopInfo(id);
       console.log('shop info : ', info);
+      console.log('shop info.currency : ', info.currency);
       // const deviceLocales = getLocales()[0];
       // console.log('deviceLocales :', deviceLocales);
       userStore.setShopId(info.shopId);
       userStore.setShopName(info.name);
       // userStore.setLang(deviceLocales.languageCode.toLowerCase());
-      // userStore.setCountry(deviceLocales.regionCode.toLowerCase());
+      userStore.setCurrency(info.currency);
       // userStore.setLangTag(deviceLocales.languageTag);
       // userStore.setCountryPhoneCode(
       //   deviceLocales.regionCode == 'KR' ? '82' : '82',

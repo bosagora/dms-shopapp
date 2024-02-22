@@ -116,7 +116,7 @@ const Index = observer(({ navigation }) => {
     }
 
     const shopInfo = await c.shop.getShopInfo(userStore.shopId);
-    // console.log('shopInfo :', shopInfo);
+    console.log('shopInfo :', shopInfo);
     setAdjustmentStatus(shopInfo.withdrawStatus);
 
     const convProvidedAmount = new Amount(shopInfo.providedAmount, 18);
