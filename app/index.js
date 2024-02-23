@@ -98,20 +98,16 @@ const App = observer(() => {
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
   const { i18n } = useTranslation();
 
-  const { expoPushToken } = usePushNotification(
-    userStore,
-    loyaltyStore,
-    pinStore,
-  );
+  usePushNotification(userStore, loyaltyStore, pinStore);
   useEffect(() => {
     const rehydrate = async () => {
       await trunk.init();
       setIsStoreLoaded(true);
       // pinStore.setVisible(false);
-      console.log('push token :', expoPushToken);
-      if (expoPushToken !== undefined && expoPushToken?.data?.length > 10) {
-        userStore.setExpoPushToken(expoPushToken.data);
-      }
+      // console.log('push token :', expoPushToken);
+      // if (expoPushToken !== undefined && expoPushToken?.data?.length > 10) {
+      //   userStore.setExpoPushToken(expoPushToken.data);
+      // }
 
       userStore.setLoading(false);
       console.log('app.index > userStore : ', userStore);

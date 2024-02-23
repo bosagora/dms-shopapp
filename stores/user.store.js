@@ -21,11 +21,12 @@ class UserStore {
   langTag = '';
   currency = '';
 
-
   shopId = '00000';
   shopName = 'unknown';
 
   enableBio = false;
+  enableNotification = false;
+  registeredPushToken = false;
 
   permissionsCount = 0;
   expoPushToken = '';
@@ -35,7 +36,7 @@ class UserStore {
   constructor() {
     makeAutoObservable(this);
   }
-  reset(){
+  reset() {
     this.state = '';
     this.name = '';
     this.email = '';
@@ -48,10 +49,12 @@ class UserStore {
     this.shopId = '00000';
     this.shopName = 'unknown';
     this.enableBio = false;
+    this.enableNotification = false;
+    this.registeredPushToken = false;
     this.permissionsCount = 0;
     this.expoPushToken = '';
     this.loading = false;
-    this.walletInterval =0;
+    this.walletInterval = 0;
   }
 
   setAuthState = (state) => {
@@ -84,8 +87,14 @@ class UserStore {
   setLangTag = (langTag) => {
     this.langTag = langTag;
   };
-  setEnableBio = (enableBio) => {
-    this.enableBio = enableBio;
+  setEnableBio = (enable) => {
+    this.enableBio = enable;
+  };
+  setEnableNotification = (enable) => {
+    this.enableNotification = enable;
+  };
+  setRegisteredPushToken = (enable) => {
+    this.registeredPushToken = enable;
   };
 
   setPermissionsCount = () => {
@@ -101,14 +110,14 @@ class UserStore {
 
   setShopId = (id) => {
     this.shopId = id;
-  }
+  };
 
   setShopName = (name) => {
     this.shopName = name;
-  }
+  };
   setWalletInterval = (intv) => {
     this.walletInterval = intv;
-  }
+  };
 }
 
 export default UserStore;

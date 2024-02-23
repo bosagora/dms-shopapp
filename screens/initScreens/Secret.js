@@ -64,6 +64,14 @@ const Secret = observer(({ navigation }) => {
 
   async function registerPushTokenWithClient(cc) {
     console.log('registerPushTokenWithClient >>>>>>>> cc:', cc);
+    if (
+      userStore.expoPushToken === '' ||
+      userStore.enableNotification === false
+    ) {
+      userStore.setRegisteredPushToken(false);
+      return;
+    }
+
     const token = userStore.expoPushToken;
     const language = 'kr';
     const os = Platform.OS === 'android' ? 'android' : 'iOS';
@@ -74,6 +82,7 @@ const Secret = observer(({ navigation }) => {
         os,
         MobileType.SHOP_APP,
       );
+      userStore.setRegisteredPushToken(true);
     } catch (e) {
       await Clipboard.setStringAsync(JSON.stringify(e));
       console.log('error : ', e);

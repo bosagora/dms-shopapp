@@ -39,7 +39,7 @@
   "permission.header.subtitle": "",
   "permission.body.heading": "Push notifications",
   "permission.body.text.a": "Please enable push notifications in your system settings to receive necessary alerts (redemption confirmation, cancellation, and more) for your KIOS loyalty redemption.",
-  "permission.body.text.b": "To allow push notifications, go to Settings > KIOS > Notifications and turn on 'Allow notifications'",
+  "permission.body.text.b": "To allow push notifications, go to Settings > Notifications >  KIOS for stores  and turn on 'Allow notifications'",
 
   "term.header.title": "Please agree to use KIOS app",
   "term.header.subtitle": "",
@@ -130,6 +130,7 @@
   "config.menu.a": "Change your passcode",
   "config.menu.b": "Use Biometric authentication",
   "config.menu.c": "Wallet settings",
+  "config.menu.d": "Use Push Notification",
   "config.wallet.alert.import.fail": "Unable to import your wallet. Please try again.",
   "config.wallet.alert.import.done": "Your wallet has been successfully imported.",
   "config.wallet.header.title": "Wallet management",

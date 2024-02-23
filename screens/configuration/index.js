@@ -12,26 +12,85 @@ import {
 import { MaterialIcons } from '@expo/vector-icons';
 import { useStores } from '../../stores';
 import { PinCodeT } from 'react-native-pincode-bosagora-ys';
-import { Pressable } from 'react-native';
+import { Platform, Pressable } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import Constants from 'expo-constants';
+import { registerForPushNotificationsAsync } from '../../hooks/usePushNotification';
+import { getClient } from '../../utils/client';
+import { MobileType } from 'dms-sdk-client';
+import * as Clipboard from 'expo-clipboard';
 
 const Configuration = observer(({ navigation }) => {
   const { t } = useTranslation();
   const { pinStore, userStore } = useStores();
-  const [isEnabled, setIsEnabled] = useState(false);
+  const [bioAuthenticationEnabled, setBioAuthenticationEnabled] =
+    useState(false);
+  const [registeredPushToken, setRegisteredPushToken] = useState(false);
+  const [client, setClient] = useState();
+  const [walletAddress, setWalletAddress] = useState('');
+
+  const fetchClient = async () => {
+    const { client: client1, address: userAddress } = await getClient();
+    console.log('>>>>>>> userAddress :', userAddress);
+    setClient(client1);
+    setWalletAddress(userAddress);
+
+    console.log('Secret fetch > client1 :', client1);
+    return client1;
+  };
 
   useEffect(() => {
-    setIsEnabled(userStore.enableBio);
+    setBioAuthenticationEnabled(userStore.enableBio);
+    setRegisteredPushToken(userStore.registeredPushToken);
     pinStore.setMode(PinCodeT.Modes.Enter);
     pinStore.setSuccessEnter(false);
     pinStore.setVisible(false);
   }, []);
-  const toggleSwitch = (toggleState) => {
+  const toggleBioAuthentication = (toggleState) => {
     console.log('bio :', toggleState);
-    setIsEnabled(toggleState);
+    setBioAuthenticationEnabled(toggleState);
     userStore.setEnableBio(toggleState);
   };
+  const togglePushNotification = async (toggleState) => {
+    console.log('PushNotification :', toggleState);
+    setRegisteredPushToken(toggleState);
+    const ret = await registerForPushNotificationsAsync(userStore);
+
+    if (ret === 'denied') alert(t('permission.body.text.b'));
+
+    if (toggleState && ret === 'granted') {
+      const cc = await fetchClient();
+      const regRet = await registerPushTokenWithClient(cc);
+      if (regRet) {
+        setRegisteredPushToken(true);
+        userStore.setRegisteredPushToken(true);
+      }
+    } else {
+      setRegisteredPushToken(false);
+      userStore.setRegisteredPushToken(false);
+    }
+  };
+
+  async function registerPushTokenWithClient(cc) {
+    console.log('registerPushTokenWithClient >>>>>>>> cc:', cc);
+    const token = userStore.expoPushToken;
+    const language = userStore.lang;
+    const os = Platform.OS === 'android' ? 'android' : 'iOS';
+    try {
+      await cc.ledger.registerMobileToken(
+        token,
+        language,
+        os,
+        MobileType.SHOP_APP,
+      );
+      return true;
+    } catch (e) {
+      await Clipboard.setStringAsync(JSON.stringify(e));
+      console.log('error : ', e);
+      alert(t('secret.alert.push.fail') + JSON.stringify(e.message));
+      return false;
+    }
+  }
   const setPincode = () => {
     console.log('setPincode');
     pinStore.setNextScreen('setPincode');
@@ -72,6 +131,10 @@ const Configuration = observer(({ navigation }) => {
       name: t('config.menu.c'),
     },
     {
+      id: '4a0f5869',
+      name: t('config.menu.d'),
+    },
+    {
       id: 'cb69423sg',
       name:
         'Version : ' +
@@ -80,7 +143,7 @@ const Configuration = observer(({ navigation }) => {
         process.env.EXPO_PUBLIC_BUNDLE_CODE +
         ' (' +
         process.env.EXPO_PUBLIC_ENV +
-        ')',
+        ') ',
     },
   ];
   return (
@@ -141,8 +204,14 @@ const Configuration = observer(({ navigation }) => {
                   {item.id === '3ac68afc' ? (
                     <Switch
                       size='sm'
-                      onToggle={toggleSwitch}
-                      value={isEnabled}
+                      onToggle={toggleBioAuthentication}
+                      value={bioAuthenticationEnabled}
+                    />
+                  ) : item.id === '4a0f5869' ? (
+                    <Switch
+                      size='sm'
+                      onToggle={togglePushNotification}
+                      value={registeredPushToken}
                     />
                   ) : item.id !== 'cb69423sg' ? (
                     <MaterialIcons

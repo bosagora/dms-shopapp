@@ -5,45 +5,17 @@ import * as RootNavigation from '../utils/root.navigation';
 import Constants from 'expo-constants';
 import { Platform } from 'react-native';
 
-export const usePushNotification = (userStore, loyaltyStore, pinStore) => {
-  Notifications.setNotificationHandler({
-    handleNotification: async () => ({
-      shouldPlaySound: false,
-      shouldShowAlert: true,
-      shouldSetBadge: false,
-    }),
-  });
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldPlaySound: false,
+    shouldShowAlert: true,
+    shouldSetBadge: false,
+  }),
+});
 
-  const [expoPushToken, setExpoPushToken] = useState();
-  const [notification, setNotification] = useState();
-
-  const notificationListener = useRef();
-  const responseListener = useRef();
-
-  async function registerForPushNotificationsAsync() {
-    let token;
-    if (Device.isDevice) {
-      const { existingStatus } = await Notifications.getPermissionsAsync();
-      let finalStatus = existingStatus;
-
-      if (existingStatus !== 'granted') {
-        const { status } = await Notifications.requestPermissionsAsync();
-        finalStatus = status;
-      }
-      if (finalStatus !== 'granted') {
-        alert('Failed to get push token for push notificaiton.');
-        return;
-      }
-
-      token = await Notifications.getExpoPushTokenAsync({
-        projectId: Constants.expoConfig?.extra?.eas.projectId,
-      });
-    } else {
-      console.log('Must be using a physical device for Push Notification.');
-      return;
-    }
-    console.log('t token :', token);
-
+export async function registerForPushNotificationsAsync(userStore) {
+  let token;
+  try {
     if (Platform.OS === 'android') {
       Notifications.setNotificationChannelAsync('default', {
         name: 'default',
@@ -52,17 +24,52 @@ export const usePushNotification = (userStore, loyaltyStore, pinStore) => {
         lightColor: '#FF231F7C',
       });
     }
-    console.log(' after token');
-    userStore.setExpoPushToken(token?.data);
-    return token;
+
+    if (Device.isDevice) {
+      const { existingStatus } = await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+
+      if (existingStatus !== 'granted') {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+      if (finalStatus == 'granted') {
+        token = await Notifications.getExpoPushTokenAsync({
+          projectId: Constants.expoConfig?.extra?.eas.projectId,
+        });
+
+        userStore.setEnableNotification(true);
+        userStore.setExpoPushToken(token?.data);
+        return finalStatus;
+      } else {
+        console.log('Failed to get push token for push notificaiton.');
+        userStore.setEnableNotification(false);
+        userStore.setExpoPushToken('');
+        return finalStatus;
+      }
+    } else {
+      console.log('Must be using a physical device for Push Notification.');
+      return 'granted';
+    }
+  } catch (e) {
+    alert('usePushNotification e :' + e.message);
   }
+}
+
+export const usePushNotification = (userStore, loyaltyStore, pinStore) => {
+  // const [expoPushToken, setExpoPushToken] = useState();
+  const [notification, setNotification] = useState();
+
+  const notificationListener = useRef();
+  const responseListener = useRef();
 
   useEffect(() => {
-    registerForPushNotificationsAsync().then((token) => {
-      setExpoPushToken(token);
+    registerForPushNotificationsAsync(userStore).then((granted) => {
+      // setExpoPushToken(token);
     });
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
+        // alert('notification : ' + notification);
         setNotification(notification);
       });
     responseListener.current =
@@ -103,5 +110,5 @@ export const usePushNotification = (userStore, loyaltyStore, pinStore) => {
     };
   }, [userStore.permissionsCount]);
 
-  return { expoPushToken, notification };
+  // return { expoPushToken, notification };
 };

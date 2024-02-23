@@ -40,7 +40,7 @@ const Permissions = observer(({ navigation }) => {
   function agreePermissions() {
     console.log('agreePermissions >');
     if (Device.isDevice) {
-      if (checkPushToken()) {
+      if (true || checkPushToken()) {
         navigation.navigate('Term');
       } else {
         alert(t('permission.agree.alert'));
@@ -82,7 +82,7 @@ const Permissions = observer(({ navigation }) => {
 
           <Box py='$10'>
             <Button py='$2.5' px='$3' onPress={() => agreePermissions()}>
-              <ButtonText>{t('button.press.a')}</ButtonText>
+              <ButtonText>{t('next')}</ButtonText>
             </Button>
           </Box>
         </VStack>
