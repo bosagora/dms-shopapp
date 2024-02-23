@@ -146,7 +146,9 @@ const MileageHistory = observer(({ navigation }) => {
           subTitle={
             historyData && historyData.length > 0
               ? t('wallet.history.header.subtitle.a') +
+                ' ' +
                 historyData.length +
+                ' ' +
                 t('wallet.history.header.subtitle.b')
               : t('wallet.history.header.subtitle.nothing')
           }

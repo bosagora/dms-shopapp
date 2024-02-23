@@ -346,29 +346,59 @@ function MainStackScreen() {
       <MainStack.Screen
         name='WalletManager'
         component={WalletManager}
-        options={{ title: '' }}
+        options={{
+          title: '',
+          headerStyle: {
+            backgroundColor: '#1f2937',
+          },
+          headerTintColor: '#fff',
+        }}
       />
       <MainStack.Screen name='QRActionSheet' component={QRActionSheet} />
       <MainStack.Screen
         name='MileageHistory'
         component={MileageHistory}
-        options={{ title: '' }}
+        options={{
+          title: '',
+          headerStyle: {
+            backgroundColor: '#1f2937',
+          },
+          headerTintColor: '#fff',
+        }}
       />
       <MainStack.Screen
         name='MileageAdjustmentHistory'
         component={MileageAdjustmentHistory}
-        options={{ title: '' }}
+        options={{
+          title: '',
+          headerStyle: {
+            backgroundColor: '#1f2937',
+          },
+          headerTintColor: '#fff',
+        }}
       />
 
       <MainStack.Screen
         name='MileageRedeemNotification'
         component={MileageRedeemNotification}
-        options={{ title: '' }}
+        options={{
+          title: '',
+          headerStyle: {
+            backgroundColor: '#1f2937',
+          },
+          headerTintColor: '#fff',
+        }}
       />
       <MainStack.Screen
         name='ShopNotification'
         component={ShopNotification}
-        options={{ title: '' }}
+        options={{
+          title: '',
+          headerStyle: {
+            backgroundColor: '#1f2937',
+          },
+          headerTintColor: '#fff',
+        }}
       />
       <MainStack.Screen
         name='LocalNotification'
