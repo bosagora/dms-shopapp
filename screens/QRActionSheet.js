@@ -33,6 +33,7 @@ import { observer } from 'mobx-react';
 import * as Clipboard from 'expo-clipboard';
 import { truncateMiddleString } from '../utils/convert';
 import { useTranslation } from 'react-i18next';
+import { getClient } from '../utils/client';
 
 // export default function QRActionSheet() {
 const QRActionSheet = observer(() => {
@@ -46,13 +47,39 @@ const QRActionSheet = observer(() => {
     }
     fetchWalletAddress();
   }, [secretStore.address]);
+  const [temporaryAccount, setTemporaryAccount] = useState('erertertererter');
+  useEffect(() => {
+    try {
+      async function fetchTemporaryAccount() {
+        const { client: client1, address: userAddress } = await getClient();
+        console.log('userAddress >> :', userAddress);
+        console.log('client1 >> :', client1);
+        const web3Status = await client1.web3.isUp();
+        console.log('web3Status :', web3Status);
+        const isUp = await client1.ledger.isRelayUp();
+        console.log('isUp:', isUp);
+        if (isUp) {
+          const account = await client1.ledger.getTemporaryAccount();
+          console.log('account :', account);
+          setTemporaryAccount(account);
+        }
+      }
+
+      if (secretStore.showQRSheet) fetchTemporaryAccount();
+      else setTemporaryAccount('00000');
+    } catch (e) {
+      console.log('e :', e);
+    }
+  }, [secretStore.showQRSheet]);
   const handleClose = () =>
     secretStore.setShowQRSheet(!secretStore.showQRSheet);
   return (
     <Box>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        <Actionsheet isOpen={secretStore.showQRSheet} onClose={handleClose}>
+        <Actionsheet
+          isOpen={temporaryAccount !== '00000' && secretStore.showQRSheet}
+          onClose={handleClose}>
           <ActionsheetBackdrop bg='$borderLight200' />
           <ActionsheetContent maxHeight='75%'>
             <ActionsheetDragIndicatorWrapper>
@@ -78,7 +105,7 @@ const QRActionSheet = observer(() => {
                   }}>
                   <Box w='$full' p={20}>
                     {walletAddress ? (
-                      <QRCode size={250} value={walletAddress} />
+                      <QRCode size={250} value={temporaryAccount} />
                     ) : null}
                   </Box>
                   <VStack px='$6' pt='$4' pb='$6'>
@@ -87,13 +114,13 @@ const QRActionSheet = observer(() => {
                       _dark={{ color: '$black' }}
                       size='sm'
                       p='$1.5'>
-                      {truncateMiddleString(walletAddress || '', 24)}
+                      {truncateMiddleString(temporaryAccount || '', 24)}
                     </Text>
                     <Button
                       variant='solid'
                       action='primary'
                       onPress={async () => {
-                        await Clipboard.setStringAsync(walletAddress);
+                        await Clipboard.setStringAsync(temporaryAccount);
                         handleClose();
                       }}>
                       <ButtonText fontSize='$sm' fontWeight='$medium'>
