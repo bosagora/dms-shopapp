@@ -87,18 +87,20 @@ export const usePushNotification = (userStore, loyaltyStore, pinStore) => {
         };
 
         // alert(
-        //   'notification data :' +
-        //     JSON.stringify(response.notification.request.content),
+        //   'notification data :' + JSON.stringify(response.notification.request),
         // );
         // loyaltyStore.setPayment(payment);
-        if (data.type === 'cancel') {
-          pinStore.setNextScreen('MileageRedeemNotification');
+        if (payment.type === 'cancel') {
+          // pinStore.setNextScreen('MileageRedeemNotification');
           loyaltyStore.setPayment(payment);
-          RootNavigation.navigate('MileageRedeemNotification');
-        } else if (data.type === 'shop_update' || data.type === 'shop_status') {
-          pinStore.setNextScreen('ShopNotification');
+          // RootNavigation.navigate('MileageRedeemNotification');
+        } else if (
+          payment.type === 'shop_update' ||
+          payment.type === 'shop_status'
+        ) {
+          // pinStore.setNextScreen('ShopNotification');
           loyaltyStore.setPayment(payment);
-          RootNavigation.navigate('ShopNotification');
+          // RootNavigation.navigate('ShopNotification');
         }
       });
 

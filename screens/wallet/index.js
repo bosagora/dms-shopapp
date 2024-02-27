@@ -25,7 +25,7 @@ import {
   ContractUtils,
   ShopWithdrawStatus,
 } from 'dms-sdk-client';
-import { convertProperValue } from '../../utils/convert';
+import { convertProperValue, truncateMiddleString } from '../../utils/convert';
 import loyaltyStore from '../../stores/loyalty.store';
 import { SafeAreaView } from 'react-native';
 import { useTranslation } from 'react-i18next';
@@ -87,13 +87,15 @@ const Index = observer(({ navigation }) => {
     setClient(client1);
     setAddress(userAddress);
 
-    const web3Status = await client1.web3.isUp();
-    console.log('web3Status :', web3Status);
-    const isUp = await client1.ledger.isRelayUp();
-    console.log('isUp:', isUp);
-
     await setData(client1);
     await fetchBalances(client1);
+
+    // loyaltyStore.setPayment({
+    //   id: '0x5f59d6b480ff5a30044dcd7fe3b28c69b6d0d725ca469d1b685b57dfc1055d7f',
+    //   type: 'shop_update',
+    //   taskId:
+    //     '0xf7d3c6c310f5b53d62e96e363146b7da517ffaf063866923c6ce60683b154c91',
+    // });
   }
   async function fetchBalances(cc, userAddress) {
     if (userStore.walletInterval > 0) clearInterval(userStore.walletInterval);
@@ -116,7 +118,7 @@ const Index = observer(({ navigation }) => {
     }
 
     const shopInfo = await c.shop.getShopInfo(userStore.shopId);
-    console.log('shopInfo :', shopInfo);
+    // console.log('shopInfo :', shopInfo);
     setAdjustmentStatus(shopInfo.withdrawStatus);
 
     const convProvidedAmount = new Amount(shopInfo.providedAmount, 18);
@@ -228,7 +230,18 @@ const Index = observer(({ navigation }) => {
             borderColor: '$borderDark800',
           },
         }}>
-        <VStack justifyContent='center' alignItems='center' p='$5'>
+        <Box alignItems='flex-end' pt='$4' px='$5'>
+          <Button
+            variant='link'
+            onPress={async () => {
+              await Clipboard.setStringAsync(address);
+            }}>
+            <ButtonText fontWeight='$medium' fontSize='$sm'>
+              {truncateMiddleString(address || '', 12)}
+            </ButtonText>
+          </Button>
+        </Box>
+        <VStack justifyContent='center' alignItems='center' px='$4'>
           <HStack>
             <Box
               // maxWidth='$64'

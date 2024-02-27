@@ -6,7 +6,6 @@ export function truncateString(str, num = 10) {
   }
 }
 export function truncateMiddleString(str, num = 10) {
-  console.log('str :', str);
   if (!str) str = '';
   if (str.length > num) {
     return str.slice(0, num / 2 + 2) + ' ... ' + str.slice(-num / 2);
@@ -32,4 +31,17 @@ export function numberWithCommas(x) {
 
 export function timePadding(t) {
   return ('0' + t).slice(-2);
+}
+
+export function isEmpty(obj) {
+  console.log('obj :', obj);
+  if (
+    obj === null ||
+    obj === '' ||
+    (obj && Object.keys(obj).length === 0 && obj.constructor === Object)
+  ) {
+    console.log('no payment');
+    return true;
+  }
+  return false;
 }

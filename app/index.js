@@ -289,6 +289,8 @@ const App = observer(() => {
             <QRActionSheet />
             <TermActionSheet />
             <PrivacyActionSheet />
+            <ShopNotification />
+            <MileageRedeemNotification />
           </GluestackUIProvider>
         </NavigationContainer>
         <PinCodeScreen />
@@ -336,95 +338,88 @@ function InitStackScreen() {
 
 function MainStackScreen() {
   return (
-    <MainStack.Navigator style={{ backgroundColor: '#171717' }}>
-      <MainStack.Screen
-        name='TabScreens'
-        component={TabScreens}
-        options={{ headerShown: false }}
-      />
-      <MainStack.Screen
-        name='Temp'
-        component={Temp}
-        options={{ headerShown: false }}
-      />
-      <MainStack.Screen
-        name='WalletManager'
-        component={WalletManager}
-        options={{
-          title: '',
-          headerStyle: {
-            backgroundColor: '#1f2937',
-          },
-          headerTintColor: '#fff',
-        }}
-      />
-      <MainStack.Screen name='QRActionSheet' component={QRActionSheet} />
-      <MainStack.Screen
-        name='MileageHistory'
-        component={MileageHistory}
-        options={{
-          title: '',
-          headerStyle: {
-            backgroundColor: '#1f2937',
-          },
-          headerTintColor: '#fff',
-        }}
-      />
-      <MainStack.Screen
-        name='MileageAdjustmentHistory'
-        component={MileageAdjustmentHistory}
-        options={{
-          title: '',
-          headerStyle: {
-            backgroundColor: '#1f2937',
-          },
-          headerTintColor: '#fff',
-        }}
-      />
+    <MainStack.Navigator>
+      <MainStack.Group>
+        <MainStack.Screen
+          name='TabScreens'
+          component={TabScreens}
+          options={{ headerShown: false }}
+        />
+        <MainStack.Screen
+          name='Temp'
+          component={Temp}
+          options={{ headerShown: false }}
+        />
+        <MainStack.Screen
+          name='WalletManager'
+          component={WalletManager}
+          options={{
+            title: '',
+            headerStyle: {
+              backgroundColor: '#1f2937',
+            },
+            headerTintColor: '#fff',
+          }}
+        />
+        <MainStack.Screen name='QRActionSheet' component={QRActionSheet} />
+        <MainStack.Screen
+          name='MileageHistory'
+          component={MileageHistory}
+          options={{
+            title: '',
+            headerStyle: {
+              backgroundColor: '#1f2937',
+            },
+            headerTintColor: '#fff',
+          }}
+        />
+        <MainStack.Screen
+          name='MileageAdjustmentHistory'
+          component={MileageAdjustmentHistory}
+          options={{
+            title: '',
+            headerStyle: {
+              backgroundColor: '#1f2937',
+            },
+            headerTintColor: '#fff',
+          }}
+        />
 
-      <MainStack.Screen
-        name='MileageRedeemNotification'
-        component={MileageRedeemNotification}
-        options={{
-          title: '',
-          headerStyle: {
-            backgroundColor: '#1f2937',
-          },
-          headerTintColor: '#fff',
-        }}
-      />
-      <MainStack.Screen
-        name='ShopNotification'
-        component={ShopNotification}
-        options={{
-          title: '',
-          headerStyle: {
-            backgroundColor: '#1f2937',
-          },
-          headerTintColor: '#fff',
-        }}
-      />
-      <MainStack.Screen
-        name='LocalNotification'
-        component={LocalNotification}
-      />
-      <MainStack.Screen name='Detail' component={DetailsScreen} />
-      <MainStack.Screen
-        name='ActionSheetScreen'
-        component={ActionSheetScreen}
-      />
-      <MainStack.Screen name='About' component={About} />
-      <MainStack.Screen name='Test' component={Test} />
-      <MainStack.Screen name='SignIn' component={SignIn} />
-      <MainStack.Screen name='ModalScreen' component={ModalScreen} />
-      <MainStack.Screen
-        name='HandelAuthentication'
-        component={HandelAuthentication}
-      />
-      <MainStack.Screen
-        name='BiometricAuthScreen'
-        component={BiometricAuthScreen}
-      />
+        <MainStack.Screen
+          name='LocalNotification'
+          component={LocalNotification}
+        />
+        <MainStack.Screen name='Detail' component={DetailsScreen} />
+        <MainStack.Screen
+          name='ActionSheetScreen'
+          component={ActionSheetScreen}
+        />
+        <MainStack.Screen name='About' component={About} />
+        <MainStack.Screen name='Test' component={Test} />
+        <MainStack.Screen name='SignIn' component={SignIn} />
+        <MainStack.Screen name='ModalScreen' component={ModalScreen} />
+        <MainStack.Screen
+          name='HandelAuthentication'
+          component={HandelAuthentication}
+        />
+        <MainStack.Screen
+          name='BiometricAuthScreen'
+          component={BiometricAuthScreen}
+        />
+      </MainStack.Group>
+      {/*<MainStack.Group screenOptions={{ presentation: 'modal' }}>*/}
+      {/*  <MainStack.Screen*/}
+      {/*    name='ShopNotification'*/}
+      {/*    component={ShopNotification}*/}
+      {/*    options={{*/}
+      {/*      title: '',*/}
+      {/*      headerStyle: {*/}
+      {/*        backgroundColor: '#1f2937',*/}
+      {/*      },*/}
+      {/*      headerTintColor: '#fff',*/}
+      {/*    }}*/}
+      {/*  />*/}
+      {/*</MainStack.Group>*/}
     </MainStack.Navigator>
   );
 }

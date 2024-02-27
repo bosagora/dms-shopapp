@@ -86,6 +86,11 @@ const QRActionSheet = observer(() => {
               <ActionsheetDragIndicator />
             </ActionsheetDragIndicatorWrapper>
             <VStack w='$full' p={20}>
+              <Box space='lg' pt='$4' m='$7' alignItems='center'>
+                <Heading _dark={{ color: '$textLight200' }} size='lg'>
+                  마일리지 적립/사용 QR
+                </Heading>
+              </Box>
               <HStack justifyContent='center' alignItems='center' space='md'>
                 <Box
                   // maxWidth='$64'
@@ -108,28 +113,9 @@ const QRActionSheet = observer(() => {
                       <QRCode size={250} value={temporaryAccount} />
                     ) : null}
                   </Box>
-                  <VStack px='$6' pt='$4' pb='$6'>
-                    <Text
-                      color='black'
-                      _dark={{ color: '$black' }}
-                      size='sm'
-                      p='$1.5'>
-                      {truncateMiddleString(temporaryAccount || '', 24)}
-                    </Text>
-                    <Button
-                      variant='solid'
-                      action='primary'
-                      onPress={async () => {
-                        await Clipboard.setStringAsync(temporaryAccount);
-                        handleClose();
-                      }}>
-                      <ButtonText fontSize='$sm' fontWeight='$medium'>
-                        {t('copy')}
-                      </ButtonText>
-                    </Button>
-                  </VStack>
                 </Box>
               </HStack>
+              <Box space='sm' pt='$1' m='$7'></Box>
             </VStack>
           </ActionsheetContent>
         </Actionsheet>
