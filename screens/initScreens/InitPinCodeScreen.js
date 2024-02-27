@@ -37,7 +37,7 @@ const InitPinCodeScreen = observer(({ navigation }) => {
     main: {
       ...StyleSheet.absoluteFillObject,
       zIndex: 99,
-      backgroundColor: '#4b5563',
+      backgroundColor: '#1f2937',
     },
     enter: {
       ...EnterAndSet,

@@ -68,6 +68,8 @@ import { getLocales } from 'expo-localization';
 import * as Updates from 'expo-updates';
 import * as Device from 'expo-device';
 import ShopNotification from '../screens/wallet/ShopNotification';
+import * as SystemUI from 'expo-system-ui';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 // Text 적용
 Text.defaultProps = Text.defaultProps || {};
@@ -100,6 +102,7 @@ const App = observer(() => {
 
   usePushNotification(userStore, loyaltyStore, pinStore);
   useEffect(() => {
+    SystemUI.setBackgroundColorAsync('#1f2937');
     const rehydrate = async () => {
       await trunk.init();
       setIsStoreLoaded(true);
@@ -252,6 +255,11 @@ const App = observer(() => {
     return (
       <BottomSheetModalProvider>
         <NavigationContainer
+          theme={{
+            colors: {
+              background: '#171717',
+            },
+          }}
           independent={true}
           ref={navigationRef}
           onReady={() =>
@@ -328,7 +336,7 @@ function InitStackScreen() {
 
 function MainStackScreen() {
   return (
-    <MainStack.Navigator>
+    <MainStack.Navigator style={{ backgroundColor: '#171717' }}>
       <MainStack.Screen
         name='TabScreens'
         component={TabScreens}
@@ -444,7 +452,7 @@ const TabScreens = observer(() => {
   const handleQRSheet = () => {
     secretStore.setShowQRSheet(!secretStore.showQRSheet);
   };
-
+  const insets = useSafeAreaInsets();
   return (
     <Tab.Navigator
       initialRouteName='Wallet'
@@ -452,15 +460,14 @@ const TabScreens = observer(() => {
         headerShown: false,
         tabBarShowLabel: false,
         tabBarStyle: {
-          backgroundColor: '#171717',
-          height: 50,
-          marginBottom: 2,
-          paddingBottom: 2,
+          height: 60,
+          backgroundColor: '#1f2937',
+          marginBottom: 0,
+          paddingBottom: 0,
           borderTopWidth: 0,
           borderBottomWidth: 0,
         },
         tabBarItemStyle: {
-          backgroundColor: '#171717',
           color: 'white',
           margin: 2,
           borderRadius: 10,
@@ -471,10 +478,11 @@ const TabScreens = observer(() => {
         component={Wallet}
         options={{
           title: '홈',
+          tabBarVisible: false,
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons
               name='wallet-outline'
-              size={focused ? 34 : 24}
+              size={focused ? 44 : 24}
               color={focused ? '#4ade80' : 'white'}
             />
           ),
