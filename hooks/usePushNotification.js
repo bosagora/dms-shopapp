@@ -89,18 +89,12 @@ export const usePushNotification = (userStore, loyaltyStore, pinStore) => {
         // alert(
         //   'notification data :' + JSON.stringify(response.notification.request),
         // );
-        // loyaltyStore.setPayment(payment);
-        if (payment.type === 'cancel') {
-          // pinStore.setNextScreen('MileageRedeemNotification');
-          loyaltyStore.setPayment(payment);
-          // RootNavigation.navigate('MileageRedeemNotification');
-        } else if (
+        if (
+          payment.type === 'cancel' ||
           payment.type === 'shop_update' ||
           payment.type === 'shop_status'
         ) {
-          // pinStore.setNextScreen('ShopNotification');
           loyaltyStore.setPayment(payment);
-          // RootNavigation.navigate('ShopNotification');
         }
       });
 

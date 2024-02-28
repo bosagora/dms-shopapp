@@ -88,7 +88,7 @@ const QRActionSheet = observer(() => {
             <VStack w='$full' p={20}>
               <Box space='lg' pt='$4' m='$7' alignItems='center'>
                 <Heading _dark={{ color: '$textLight200' }} size='lg'>
-                  마일리지 적립/사용 QR
+                  {t('wallet.bottom.qr')}
                 </Heading>
               </Box>
               <HStack justifyContent='center' alignItems='center' space='md'>

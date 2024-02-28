@@ -70,6 +70,42 @@ const Configuration = observer(({ navigation }) => {
       userStore.setRegisteredPushToken(false);
     }
   };
+  const toggleQuickApproval = async (toggleState) => {
+    console.log('toggleQuickApproval :', toggleState);
+    userStore.setLoading(true);
+
+    const steps = [];
+    const cc = await fetchClient();
+    if (toggleState) {
+      try {
+        for await (const step of cc.shop.createDelegate(userStore.shopId)) {
+          steps.push(step);
+          console.log('createDelegate step :', step);
+        }
+        if (steps.length === 3 && steps[2].key === 'done') {
+          userStore.setQuickApproval(true);
+        }
+        userStore.setLoading(false);
+      } catch (e) {
+        console.log('error : ', e);
+        userStore.setLoading(false);
+      }
+    } else {
+      try {
+        for await (const step of cc.shop.removeDelegate(userStore.shopId)) {
+          steps.push(step);
+          console.log('removeDelegate step :', step);
+        }
+        if (steps.length === 3 && steps[2].key === 'done') {
+          userStore.setQuickApproval(false);
+        }
+        userStore.setLoading(false);
+      } catch (e) {
+        console.log('error : ', e);
+        userStore.setLoading(false);
+      }
+    }
+  };
 
   async function registerPushTokenWithClient(cc) {
     console.log('registerPushTokenWithClient >>>>>>>> cc:', cc);
@@ -133,6 +169,10 @@ const Configuration = observer(({ navigation }) => {
     {
       id: '4a0f5869',
       name: t('config.menu.d'),
+    },
+    {
+      id: 'f44a0869',
+      name: t('config.menu.e'),
     },
     {
       id: 'cb69423sg',
@@ -212,6 +252,12 @@ const Configuration = observer(({ navigation }) => {
                       size='sm'
                       onToggle={togglePushNotification}
                       value={registeredPushToken}
+                    />
+                  ) : item.id === 'f44a0869' ? (
+                    <Switch
+                      size='sm'
+                      onToggle={toggleQuickApproval}
+                      value={userStore.quickApproval}
                     />
                   ) : item.id !== 'cb69423sg' ? (
                     <MaterialIcons

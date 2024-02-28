@@ -126,11 +126,14 @@
   "wallet.shop.update.header.title": "Store/shop information change",
   "wallet.shop.update.header.subtitle": "Change your store/shop name and currency.",
 
+  "wallet.bottom.qr": "Loyalty collection/redemption QR",
+
   "config.setting": "Settings",
   "config.menu.a": "Change your passcode",
   "config.menu.b": "Use Biometric authentication",
   "config.menu.c": "Wallet settings",
   "config.menu.d": "Use Push Notification",
+  "config.menu.e": "Quick approvals",
   "config.wallet.alert.import.fail": "Unable to import your wallet. Please try again.",
   "config.wallet.alert.import.done": "Your wallet has been successfully imported.",
   "config.wallet.header.title": "Wallet management",

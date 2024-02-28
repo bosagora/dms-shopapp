@@ -33,6 +33,7 @@ class UserStore {
 
   loading = false;
   walletInterval = 0;
+  quickApproval = false;
   constructor() {
     makeAutoObservable(this);
   }
@@ -55,6 +56,7 @@ class UserStore {
     this.expoPushToken = '';
     this.loading = false;
     this.walletInterval = 0;
+    this.quickApproval = false;
   }
 
   setAuthState = (state) => {
@@ -117,6 +119,9 @@ class UserStore {
   };
   setWalletInterval = (intv) => {
     this.walletInterval = intv;
+  };
+  setQuickApproval = (appr) => {
+    this.quickApproval = appr;
   };
 }
 

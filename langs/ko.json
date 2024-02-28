@@ -126,11 +126,14 @@
   "wallet.shop.update.header.title": "상점 정보 변경",
   "wallet.shop.update.header.subtitle": "상점 이름 및 통화를 변경합니다.",
 
+  "wallet.bottom.qr": "마일리지 적립/사용 QR",
+
   "config.setting": "설정",
   "config.menu.a": "PIN 번호 변경",
   "config.menu.b": "바이오 인증 사용",
   "config.menu.c": "지갑 설정",
   "config.menu.d": "알림 설정",
+  "config.menu.e": "간편 승인",
   "config.wallet.alert.import.fail": "지갑을 가져오지 못했습니다. 다시 시도해 주세요.",
   "config.wallet.alert.import.done": "가져온 지갑이 적용 되었습니다.",
   "config.wallet.header.title": "지갑 관리",
