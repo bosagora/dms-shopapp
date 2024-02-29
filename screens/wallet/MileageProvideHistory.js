@@ -10,7 +10,7 @@ import { Amount, BOACoin } from 'dms-sdk-client';
 import { BigNumber } from '@ethersproject/bignumber';
 import { useTranslation } from 'react-i18next';
 
-const MileageHistory = observer(({ navigation }) => {
+const MileageProvideHistory = observer(({ navigation }) => {
   const { t } = useTranslation();
   const { secretStore, userStore } = useStores();
   const [client, setClient] = useState();
@@ -231,4 +231,4 @@ const MileageHistory = observer(({ navigation }) => {
   );
 });
 
-export default MileageHistory;
+export default MileageProvideHistory;

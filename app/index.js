@@ -44,7 +44,7 @@ import Configuration from '../screens/configuration';
 import WalletManager from '../screens/configuration/WalletManager';
 import { navigationRef } from '../utils/root.navigation';
 import Wallet from '../screens/wallet';
-import MileageHistory from '../screens/wallet/MileageHistory';
+import MileageProvideHistory from '../screens/wallet/MileageProvideHistory';
 import MileageCancelNotification from '../screens/wallet/MileageCancelNotification';
 import 'react-native-url-polyfill/auto';
 import { usePushNotification } from '../hooks/usePushNotification';
@@ -364,7 +364,7 @@ function MainStackScreen() {
         <MainStack.Screen name='QRActionSheet' component={QRActionSheet} />
         <MainStack.Screen
           name='MileageHistory'
-          component={MileageHistory}
+          component={MileageProvideHistory}
           options={{
             title: '',
             headerStyle: {
