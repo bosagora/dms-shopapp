@@ -126,6 +126,7 @@
   "wallet.shop.update.header.title": "상점 정보 변경",
   "wallet.shop.update.header.subtitle": "상점 이름 및 통화를 변경합니다.",
 
+  "wallet.expired.alert": "유효기간이 만료되었습니다. 다시 시도해 주세요.",
   "wallet.bottom.qr": "마일리지 적립/사용 QR",
 
   "config.setting": "설정",

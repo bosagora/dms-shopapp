@@ -45,3 +45,18 @@ export function isEmpty(obj) {
   }
   return false;
 }
+
+export function getUnixTime() {
+  return Math.floor(new Date().getTime() / 1000);
+}
+
+export function checkValidPeriod(timestamp, timeout) {
+  const validTime = timestamp + timeout;
+  const now = getUnixTime();
+  // alert(
+  //   'timestamp :' + timestamp + ', validTime : ' + validTime + ', now :' + now,
+  // );
+  if (validTime > now) {
+    return true;
+  } else return false;
+}

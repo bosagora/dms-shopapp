@@ -126,6 +126,7 @@
   "wallet.shop.update.header.title": "Store/shop information change",
   "wallet.shop.update.header.subtitle": "Change your store/shop name and currency.",
 
+  "wallet.expired.alert": "The validity period has expired. Please try again.",
   "wallet.bottom.qr": "Loyalty collection/redemption QR",
 
   "config.setting": "Settings",

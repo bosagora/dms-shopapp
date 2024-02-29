@@ -45,7 +45,7 @@ import WalletManager from '../screens/configuration/WalletManager';
 import { navigationRef } from '../utils/root.navigation';
 import Wallet from '../screens/wallet';
 import MileageHistory from '../screens/wallet/MileageHistory';
-import MileageRedeemNotification from '../screens/wallet/MileageRedeemNotification';
+import MileageCancelNotification from '../screens/wallet/MileageCancelNotification';
 import 'react-native-url-polyfill/auto';
 import { usePushNotification } from '../hooks/usePushNotification';
 import Permissions from '../screens/initScreens/Permissions';
@@ -210,7 +210,7 @@ const App = observer(() => {
 
           if (userStore.state === 'DONE' && diff > 10) {
             if (
-              pinStore.nextScreen !== 'MileageRedeemNotification' &&
+              pinStore.nextScreen !== 'MileageCancelNotification' &&
               pinStore.nextScreen !== 'ShopNotification'
             ) {
               // alert('go wallet');
@@ -290,7 +290,7 @@ const App = observer(() => {
             <TermActionSheet />
             <PrivacyActionSheet />
             <ShopNotification />
-            <MileageRedeemNotification />
+            <MileageCancelNotification />
           </GluestackUIProvider>
         </NavigationContainer>
         <PinCodeScreen />

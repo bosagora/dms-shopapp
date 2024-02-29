@@ -14,10 +14,14 @@ import MobileHeader from '../../components/MobileHeader';
 import '@ethersproject/shims';
 import { Amount, NormalSteps } from 'dms-sdk-client';
 import { getClient } from '../../utils/client';
-import { convertProperValue, isEmpty } from '../../utils/convert';
+import {
+  checkValidPeriod,
+  convertProperValue,
+  isEmpty,
+} from '../../utils/convert';
 import { useTranslation } from 'react-i18next';
 
-const MileageRedeemNotification = observer(() => {
+const MileageCancelNotification = observer(() => {
   const { t } = useTranslation();
   const { pinStore, loyaltyStore } = useStores();
 
@@ -29,6 +33,7 @@ const MileageRedeemNotification = observer(() => {
   const [amount, setAmount] = useState(new Amount(0, 18));
   const [currency, setCurrency] = useState('');
   const [hasPayment, setHasPayment] = useState(false);
+  const [expired, setExpired] = useState(false);
 
   useEffect(() => {
     async function fetchClient() {
@@ -42,6 +47,17 @@ const MileageRedeemNotification = observer(() => {
           !isEmpty(loyaltyStore.payment) &&
           loyaltyStore.payment.type === 'cancel'
         ) {
+          if (
+            checkValidPeriod(
+              loyaltyStore.payment.timestamp,
+              loyaltyStore.payment.timeout,
+            )
+          ) {
+            setExpired(false);
+          } else {
+            setExpired(true);
+            alert(t('wallet.expired.alert'));
+          }
           setHasPayment(true);
           await savePaymentInfo(client1, loyaltyStore.payment.id);
         } else {
@@ -72,6 +88,12 @@ const MileageRedeemNotification = observer(() => {
   };
 
   async function confirmCancel() {
+    if (expired) {
+      loyaltyStore.setPayment({});
+      pinStore.setNextScreen('Wallet');
+      return;
+    }
+
     try {
       const steps = [];
       const isUp = await client.ledger.isRelayUp();
@@ -98,9 +120,9 @@ const MileageRedeemNotification = observer(() => {
       if (steps.length === 3 && steps[2].key === 'approved') {
         const time = Math.round(+new Date() / 1000);
         loyaltyStore.setLastUpdateTime(time);
-        alert(t('wallet.redeem.use.done'));
         loyaltyStore.setPayment({});
         pinStore.setNextScreen('Wallet');
+        alert(t('wallet.redeem.use.done'));
       }
     } catch (e) {
       console.log('e :', e);
@@ -162,4 +184,4 @@ const MileageRedeemNotification = observer(() => {
   ) : null;
 });
 
-export default MileageRedeemNotification;
+export default MileageCancelNotification;

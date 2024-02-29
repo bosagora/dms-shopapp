@@ -19,7 +19,7 @@ import { autorun } from 'mobx';
 import { observer } from 'mobx-react';
 import QRActionSheet from './QRActionSheet';
 import LocalNotification from './LocalNotification';
-import MileageRedeemNotification from '../wallet/MileageRedeemNotification';
+import MileageCancelNotification from '../wallet/MileageCancelNotification';
 import { saveSecureValue } from '../../utils/secure.store';
 
 // export default function Kitchen({ navigation }) {
@@ -68,7 +68,7 @@ const Kitchen = observer(({ navigation }) => {
                 type: 'new',
               };
               loyaltyStore.setPayment(payment);
-              navigation.navigate('MileageRedeemNotification');
+              navigation.navigate('MileageCancelNotification');
             }}>
             <ButtonText>Go to MileageRedeemNotification </ButtonText>
             <ButtonIcon as={AddIcon} />

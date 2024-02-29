@@ -15,7 +15,7 @@ import '@ethersproject/shims';
 import { Amount, NormalSteps } from 'dms-sdk-client';
 import { getClient } from '../../utils/client';
 import { useTranslation } from 'react-i18next';
-import { isEmpty } from '../../utils/convert';
+import { checkValidPeriod, getUnixTime, isEmpty } from '../../utils/convert';
 
 const ShopNotification = observer(() => {
   const { t } = useTranslation();
@@ -29,6 +29,7 @@ const ShopNotification = observer(() => {
   const [taskId, setTaskId] = useState('');
   const [currency, setCurrency] = useState('');
   const [hasPayment, setHasPayment] = useState(false);
+  const [expired, setExpired] = useState(false);
 
   useEffect(() => {
     async function fetchClient() {
@@ -42,6 +43,17 @@ const ShopNotification = observer(() => {
           !isEmpty(loyaltyStore.payment) &&
           loyaltyStore.payment.type === 'shop_update'
         ) {
+          if (
+            checkValidPeriod(
+              loyaltyStore.payment.timestamp,
+              loyaltyStore.payment.timeout,
+            )
+          ) {
+            setExpired(false);
+          } else {
+            setExpired(true);
+            alert(t('wallet.expired.alert'));
+          }
           setHasPayment(true);
           setTaskId(loyaltyStore.payment.taskId);
           await saveTaskInfo(client1, loyaltyStore.payment.taskId);
@@ -69,6 +81,11 @@ const ShopNotification = observer(() => {
   };
 
   async function confirmUpdate() {
+    if (expired) {
+      loyaltyStore.setPayment({});
+      pinStore.setNextScreen('Wallet');
+      return;
+    }
     try {
       const steps = [];
       const isUp = await client.ledger.isRelayUp();
@@ -97,9 +114,9 @@ const ShopNotification = observer(() => {
         loyaltyStore.setLastUpdateTime(time);
         userStore.setCurrency(currency.toUpperCase());
         userStore.setShopName(shopName);
-        alert(t('wallet.shop.update.done'));
         loyaltyStore.setPayment({});
         pinStore.setNextScreen('Wallet');
+        alert(t('wallet.shop.update.done'));
       }
     } catch (e) {
       console.log('e :', e);
